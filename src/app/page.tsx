@@ -143,11 +143,16 @@ export default function HomePage() {
           <div  className="flex flex-row flex-wrap w-full">
             
             {item.lesson.map((list,idx)=>(
+              
               <div key={idx} className="flex flex-col justify-between items-center cursor-pointer w-1/5  rounded-xl shardow-xl  p-6 m-3 hover:bg-gray-50 shadow-sm transition-transform duration-200 hover:shadow-xl hover:scale-105 active:scale-95">
-                <img className="w-full" src={list.icon}></img>
-                <p className="font-semibold text-center">{list.name}</p>
+                <Link href="/play/cloze" className="w-full">
+                  <img className="w-full" src={list.icon}></img>
+                  <p className="font-semibold text-center">{list.name}</p>
+                  </Link>
+                
             
               </div>
+              
             ))}
           </div>
           </div>

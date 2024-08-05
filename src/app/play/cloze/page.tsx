@@ -156,7 +156,7 @@ function ResultBlock({
 export default function LessonPlay2() {
   const [idx, setIdx] = useState(0);
   const [quest, setQuest] = useState<Sentence[]>(sentences);
-  const [current, setCurrent] = useState<Sentence>(quest[idx]);
+  const [current, setCurrent] = useState<Sentence | undefined>(quest[idx]);
   const [total, setTotal] = useState<number>(quest.length);
   const [numPassed, setNumPassed] = useState<number>(0);
   const [isTrueValue, setIsTrueValue] = useState<boolean>(false);
@@ -166,10 +166,12 @@ export default function LessonPlay2() {
 
   const handleNextQuest = () => {
     if (!isTrueValue) {
-      setQuest((prev) => [...prev, current]);
-      setWrongAnswer((prev) => [...prev, current]);
+      if (current) {
+        setQuest((prev) => [...prev, current]);
+        setWrongAnswer((prev) => [...prev, current]);
+      }
     }
-    setIsClick(false)
+    setIsClick(false);
     setIsTrueValue(false);
     setNumPassed(numPassed + 1);
     setIdx(idx + 1);
@@ -190,6 +192,7 @@ export default function LessonPlay2() {
   }, [idx]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, value: string) => {
+    setIsClick(false)
     setInputValue(e.target.value);
     if (e.target.value.toLowerCase().trim() === value.toLowerCase()) {
       setIsTrueValue(true);
@@ -203,8 +206,8 @@ export default function LessonPlay2() {
       <div className="w-1/2 p-5">
         <ClozeHeader2 progressValue={numPassed} max={total} />
       </div>
-      {idx < quest.length ? (
-        <div className="w-1/2 flex flex-col items-center ">
+      {idx < quest.length && current ? (
+        <div className="w-1/2 flex flex-col items-center">
           <ContentBlock
             content={current.content}
             gapIndexes={current.gapIndexes}
@@ -214,43 +217,34 @@ export default function LessonPlay2() {
             isTrueValue={isTrueValue}
           />
           <p className="p-5">{current.translation}</p>
-          <div className="fixed bottom-0 flex items-center justify-center border-t-2  w-full h-20  "
-                style={
-                  {
-                    backgroundColor: isClick?(isTrueValue?"#88D66C":"#FFAAAA"):"white"
-                  
-                  }
-                }
-          >
-          <img
-          src={
-            isTrueValue
-              ? "https://cdn-icons-png.flaticon.com/128/5610/5610944.png"
-              : "https://cdn-icons-png.flaticon.com/128/16206/16206622.png"
-          }
-          className="fixed bottom-5 left-1/3 w-10 mr-40"
-          style={{
-            opacity:isClick?"1":"0"
-          }}
-          alt="status icon"
-        />
-          {isClick? <button
-              onClick={handleNextQuest}
-              className="w-40 h-1/2 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
-            >
-              Next
-            </button>: <button
-              onClick={()=>setIsClick(true)}
-              className="w-40 h-1/2 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
-            >
-              Check
-            </button>
-        }
+          <div className="fixed bottom-0 flex items-center justify-center border-t-2 w-full h-20" style={{ backgroundColor: isClick ? (isTrueValue ? "#88D66C" : "#FFAAAA") : "white" }}>
+            <img
+              src={isTrueValue ? "https://cdn-icons-png.flaticon.com/128/5610/5610944.png" : "https://cdn-icons-png.flaticon.com/128/16206/16206622.png"}
+              className="fixed bottom-5 left-1/3 w-10 mr-40"
+              style={{ opacity: isClick ? "1" : "0" }}
+              alt="status icon"
+            />
+            {isClick ? (
+              <button
+                onClick={handleNextQuest}
+                className="w-40 h-1/2 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsClick(true)}
+                className="w-40 h-1/2 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
+              >
+                Check
+              </button>
+            )}
           </div>
         </div>
       ) : (
         <ResultBlock wrongAnswers={wrongAnswers} sentences={sentences} />
       )}
+
     </div>
   );
 }
