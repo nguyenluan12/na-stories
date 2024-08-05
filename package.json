@@ -42,10 +42,14 @@
     "prisma": "^5.14.0",
     "tailwindcss": "^3.4.3",
     "ts-node": "^10.9.2",
+    "tsx": "^4.16.5",
     "typescript": "^5.5.4"
   },
   "ct3aMetadata": {
     "initVersion": "7.36.2"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   },
   "packageManager": "npm@10.1.0"
 }
