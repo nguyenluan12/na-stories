@@ -22,7 +22,7 @@ const ReviewLesson: React.FC<ReviewLessonProps> = ({ sentences, isClick }) => {
       className="flex flex-col items-center mt-10 transition-transform duration-1000"
     >
       <p className="font-bold text-2xl">Review Lesson</p>
-      <div className="max-h-[500px] overflow-scroll mt-10 border-4 border-blue-200 rounded-lg px-20 py-10">
+      <div className="max-h-[500px] overflow-scroll mt-5 border-4 border-blue-200 rounded-lg px-20 py-10">
         {sentences.map((item, index) => (
           <div
             key={index}

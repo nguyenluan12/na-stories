@@ -1,20 +1,11 @@
+import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
 import Header from "~/components/Header";
 import LogoNaschool from "~/components/HomePage/LogoNaschool";
 import MainBlock from "~/components/HomePage/MainBlock";
-import { AppleSvg,
-  BigCloseSvg,
-  BoySvg,
-  CloseSvg,
-  DoneSvg,
-  LessonFastForwardEndFailSvg,
-  LessonFastForwardEndPassSvg,
-  LessonFastForwardStartSvg,
-  LessonTopBarEmptyHeart,
-  LessonTopBarHeart,
-  WomanSvg,
-  StarSvg } from "~/components/Svgs";
-export default function HomePage() {
+
+const prisma = new PrismaClient();
+export default async function HomePage() {
   const lessons = [
     {
       id: 0,
@@ -87,8 +78,13 @@ export default function HomePage() {
       ],
     },
   ];
+  // const lessonsList = await prisma.lesson.findMany();
+  // // console.log("lessonlist")
+  // // console.log(lessonsList)
+  // const lessons = lessonsList.map((item)=>({id:item.id,lesson:item.lesson}))
   
   return (
     <MainBlock lessons={lessons}/>
+    // <></>
   );
 }
