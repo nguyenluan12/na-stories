@@ -1,6 +1,7 @@
 import React from 'react';
-import ContentBlock from '~/components/cloze/ContentBlock';
-import QuestButton from '~/components/cloze/QuestButton';
+import { ContentBlock } from './ContentBlock';
+import QuestButton from './QuestButton';
+
 // import { Sentence } from '~/types'; // Đảm bảo import đúng type Sentence
 
 type Sentence = {
@@ -16,7 +17,8 @@ interface QuestSectionProps {
   isTrueValue: boolean;
   isClick: boolean;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
-  handleNextQuest: () => void;
+  handleCheck: () => void;
+  handleNextQuest:() => void;
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -27,6 +29,7 @@ export function PlayBlock({
   isTrueValue,
   isClick,
   handleInputChange,
+  handleCheck,
   handleNextQuest,
   setIsClick,
 }: QuestSectionProps){
@@ -40,6 +43,7 @@ export function PlayBlock({
             gapIndexes={current.gapIndexes}
             inputValue={inputValue}
             handleInputChange={handleInputChange}
+            handleCheck={handleCheck}
             handleNextQuest={handleNextQuest}
             isTrueValue={isTrueValue}
             isClick={isClick}

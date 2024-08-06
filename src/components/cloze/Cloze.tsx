@@ -5,6 +5,7 @@ import ClozeHeader2 from "~/components/cloze/Header2";
 import { ResultBlock } from "~/components/cloze/ResultBlock";
 import { ContentBlock } from "~/components/cloze/ContentBlock";
 import QuestButton from "~/components/cloze/QuestButton";
+import { PlayBlock } from "./PlayBlock";
 // Define the Sentence type
 type Sentence = {
   id: string;
@@ -13,63 +14,8 @@ type Sentence = {
   gapIndexes: number[];
 };
 
-// Sample sentences
-// const sentences: Sentence[] = [
-//   {
-//     id: "1",
-//     content: "Hello naschool",
-//     translation: "Xin chào Naschool",
-//     gapIndexes: [1],
-//   },
-//   {
-//     id: "2",
-//     content: "Vietnamese Girl",
-//     translation: "Cô Gái Việt Nam",
-//     gapIndexes: [1],
-//   },
-//   {
-//     id: "3",
-//     content: "British",
-//     translation: "Người Anh",
-//     gapIndexes: [0],
-//   },
-//   {
-//     id: "4",
-//     content: "Database",
-//     translation: "Cơ sở dữ liệu",
-//     gapIndexes: [0],
-//   },
-// ];
 
-
-// async function fetchLessons() {
-  
-//   const response = await fetch('/api/lessons');
-//   if (!response.ok) {
-//     throw new Error('Failed to fetch lessons');
-//   }
-//   const data = await response.json();
-//   return data[0]?.lesson || [];
-// }
-
-// Main Component
 export default function Cloze({sentences}:{sentences:Sentence[]}) {
-  // const [sentences, setSentences] = useState<Sentence[]>([]);
-  // useEffect(() => {
-  //   async function loadData() {
-  //     try {
-  //       const data = await fetchLessons();
-        
-  //       setSentences(data)
-  //       setQuest(data);
-  //       setTotal(data.length);
-  //       setCurrent(data[0]);
-  //     } catch (error) {
-  //       console.error('Failed to load lessons:', error);
-  //     }
-  //   }
-  //   loadData();
-  // }, []);
   
   const [idx, setIdx] = useState(0);
   const [quest, setQuest] = useState<Sentence[]>(sentences);
@@ -80,25 +26,36 @@ export default function Cloze({sentences}:{sentences:Sentence[]}) {
   const [inputValue, setInputValue] = useState<string>("");
   const [wrongAnswers, setWrongAnswer] = useState<Sentence[]>([]);
   const [isClick, setIsClick] = useState(false);
-
+  const [isAdded, setIsAdded] = useState(false)
   const handleNextQuest = () => {
-    if (!isTrueValue) {
-      if (current) {
-        setQuest((prev) => [...prev, current]);
-        setWrongAnswer((prev) => [...prev, current]);
-      }
-    }
-    setIsClick(false);
+    // if (!isTrueValue) {
+    //   if (current) {
+    //     setQuest((prev) => [...prev, current]);
+    //     setWrongAnswer((prev) => [...prev, current]);
+    //   }
+    // }
+    // setIsClick(false);
     setIsTrueValue(false);
     setNumPassed(numPassed + 1);
     setIdx(idx + 1);
+    setIsAdded(false)
   };
-  
+  const handleCheck = () =>{
+    if (!isTrueValue) {
+        if (current&&!isAdded) {
+          setQuest((prev) => [...prev, current]);
+          setWrongAnswer((prev) => [...prev, current]);
+          setIsAdded(true)
+        }
+      }
+    setIsClick(true)
+  }
   useEffect(() => {
     setTotal(quest.length);
   }, [quest]);
 
   const handleSetCurrent = () => {
+    setIsClick(false);
     setCurrent(quest[idx]);
     setIsTrueValue(false);
     setInputValue("");
@@ -124,21 +81,15 @@ export default function Cloze({sentences}:{sentences:Sentence[]}) {
         <ClozeHeader2 progressValue={numPassed} max={total} />
       </div>
       {idx < quest.length && current ? (
-        <div className="w-1/2 flex flex-col items-center justify-center ">
-          <ContentBlock
-            sentences={sentences}
-            content={current.content}
-            gapIndexes={current.gapIndexes}
-            inputValue={inputValue}
-            handleInputChange={handleInputChange}
-            handleNextQuest={handleNextQuest}
-            isTrueValue={isTrueValue}
-            isClick={isClick}
-          />
-          <p className="p-5 text-center">{current.translation}</p>
-          <QuestButton isClick={isClick} isTrueValue={isTrueValue} handleNextQuest={handleNextQuest} setIsClick={setIsClick} />
-        </div>
-        
+        <PlayBlock sentences={sentences} 
+                    current={current} 
+                    inputValue={inputValue} 
+                    isTrueValue={isTrueValue} 
+                    isClick={isClick} 
+                    handleInputChange={handleInputChange} 
+                    handleCheck={handleCheck} 
+                    handleNextQuest={handleNextQuest} 
+                    setIsClick={setIsClick} />
       ) : (
 
         sentences?<ResultBlock wrongAnswers={wrongAnswers} sentences={sentences} />:<></>

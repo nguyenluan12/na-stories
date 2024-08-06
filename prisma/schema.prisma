@@ -11,10 +11,12 @@ datasource db {
 }
 
 model Lesson {
-    id     Int    @id @default(autoincrement())
-    title  String
-    image  String
-    lesson Json?
+    id      Int    @id @default(autoincrement())
+    title   String
+    image   String
+    type    String
+    lesson  Json?
+    learned String
 }
 
 model Post {

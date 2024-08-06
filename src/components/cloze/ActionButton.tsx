@@ -8,15 +8,15 @@ interface ActionButtonProps {
 
 const ActionButton: React.FC<ActionButtonProps> = ({ isClick, setIsClick }) => {
   return (
-    <div className="m-5 w-full text-center">
+    <div className="w-full mb-5 mt-1 text-center">
       {isClick ? (
-        <Link href="/" className="w-1/2 px-4 py-1 border-2 border-blue-500 rounded-lg bg-blue-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95">
+        <Link href="/" className="w-1/2   px-4 py-1 border-2 border-blue-500 rounded-lg bg-blue-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95">
           Finish
         </Link>
       ) : (
         <button
           onClick={() => setIsClick(true)}
-          className="p-0 px-4 my-2 border-2 border-blue-500 rounded-lg bg-blue-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
+          className="p-0 px-4 mt-[-10px] my-2 border-2 border-green-500 rounded-lg bg-green-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
         >
           Continue
         </button>
