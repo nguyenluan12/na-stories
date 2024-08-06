@@ -14,6 +14,7 @@ export function ContentBlock({
     handleInputChange,
     handleNextQuest,
     isTrueValue,
+    isClick
   }: {
     sentences: Sentence[];
     content: string;
@@ -22,6 +23,7 @@ export function ContentBlock({
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
     handleNextQuest: () => void;
     isTrueValue: boolean;
+    isClick: boolean;
   }) {
     const arr = content.split(" ");
     return (
@@ -34,14 +36,24 @@ export function ContentBlock({
           {arr.map((item, index) => {
             if (gapIndexes.includes(index)) {
               return (
-                <input
-                  key={index}
-                  className="text-center border border-blue-500 p-1 m-1 rounded-lg shadow-sm focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-500"
-                  placeholder="..."
-                  value={inputValue || ""}
-                  onChange={(e) => handleInputChange(e, item)}
-                //   onKeyDown={(e) => e.key === 'Enter' && handleNextQuest()}
-                />
+                <div key={index} className="  flex flex-row items-center  justify-center">
+                    <input
+                    key={index}
+                    className="relative w-2/3 text-center border border-blue-500 p-1 rounded-lg shadow-sm focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-500"
+                    placeholder="..."
+                    value={inputValue || ""}
+                    onChange={(e) => handleInputChange(e, item)}
+                    //   onKeyDown={(e) => e.key === 'Enter' && handleNextQuest()}
+                    />
+                    <div className="absolute top-20 left-30 px-5  rounded-lg bg-green-500 text-white " 
+                        style={
+                        {
+                            opacity:!isTrueValue&&isClick?"1":"0"
+                        }
+                    }>
+                        {item}
+                    </div>
+                </div>
               );
             } else {
               return <span key={index} className="m-1">{item}</span>;

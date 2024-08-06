@@ -22,6 +22,10 @@ export default function HomePage() {
           name: "The Honeymoon",
           icon: "https://ardslot.com/s/uk.svg",
         },
+        {
+          name: "A Date",
+          icon: "https://ardslot.com/s/ja.svg",
+        }
         
       ],
     },
