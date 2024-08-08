@@ -53,7 +53,7 @@ export function PlayBlock({
             isClick={isClick}
             isTrueValue={isTrueValue}
             handleNextQuest={handleNextQuest}
-            setIsClick={setIsClick}
+            handleCheck={handleCheck}
           />
         </>
       )}

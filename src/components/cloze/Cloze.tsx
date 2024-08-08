@@ -44,7 +44,13 @@ export default function Cloze({sentences}:{sentences:Sentence[]}) {
     if (!isTrueValue) {
         if (current&&!isAdded) {
           setQuest((prev) => [...prev, current]);
-          setWrongAnswer((prev) => [...prev, current]);
+          setWrongAnswer((prev) => {
+            if (!prev.includes(current)) {
+              return [...prev, current];
+            }
+            return prev;
+          });
+          
           setIsAdded(true)
         }
       }
@@ -66,13 +72,14 @@ export default function Cloze({sentences}:{sentences:Sentence[]}) {
   }, [idx]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, value: string) => {
-    setIsClick(false)
+    
     setInputValue(e.target.value);
     if (e.target.value.toLowerCase().trim() === value.toLowerCase()) {
       setIsTrueValue(true);
     } else {
       setIsTrueValue(false);
     }
+    setIsClick(false)
   };
 
   return (

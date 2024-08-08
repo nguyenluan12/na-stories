@@ -11,36 +11,28 @@ datasource db {
 }
 
 model Lesson {
-    id      String @id @default(cuid())
-    title   String
-    image   String
-    type    String
-    lesson  Json?
-    learned String
+    id          String      @id @default(cuid())
+    title       String
+    image       String
+    type        String
+    lesson      Json?
+    learned     String
+    listLesson  listLesson? @relation(fields: [LessonLevel], references: [level])
+    LessonLevel String?
 }
 
-model Post {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    title     String   @db.VarChar(255)
-    content   String?
-    published Boolean  @default(false)
-    author    User     @relation(fields: [authorId], references: [id])
-    authorId  Int
-}
-
-model Profile {
-    id     Int     @id @default(autoincrement())
-    bio    String?
-    user   User    @relation(fields: [userId], references: [id])
-    userId Int     @unique
+model listLesson {
+    level String   @id @default(cuid())
+    list  Lesson[]
 }
 
 model User {
-    id      Int      @id @default(autoincrement())
-    email   String   @unique
-    name    String?
-    posts   Post[]
-    profile Profile?
+    id            Int       @id @default(autoincrement())
+    name          String?
+    email         String    @unique
+    emailVerified DateTime?
+    image         String?
+    password      String
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
 }

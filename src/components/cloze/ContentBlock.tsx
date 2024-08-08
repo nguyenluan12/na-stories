@@ -30,7 +30,7 @@ export function ContentBlock({
   }) {
     const arr = content.split(" ");
     return (
-      <div className="w-full p-5 relative text-2xl">
+      <div className="w-full p-10 relative text-2xl">
         <div className="pt-5 pb-10 mr-5 ">
             <p className="w-fit text-3xl font-semibold border-b-2">Điền tiếp vào chỗ trống.</p>
           </div>
@@ -40,31 +40,34 @@ export function ContentBlock({
             if (gapIndexes.includes(index)) {
               return (
                 <div key={index} className="  flex flex-row items-center justify-center">
+
+                        <input
+                        key={index}
+                        className="relative w-2/3 text-center border border-blue-500 p-1 rounded-lg shadow-sm focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-500"
+                        placeholder="..."
+                        value={inputValue || ""}
+                        onChange={(e) => handleInputChange(e, item)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                            if (!isClick) {
+                                handleCheck();
+                              } else {
+                                handleNextQuest();
+                              }
+                            }
+                        }}
+                        />
+                        <div className="absolute top-0 left-30 px-5  rounded-lg bg-green-500 text-white " 
+                            style={
+                            {
+                                opacity:!isTrueValue&&isClick?"1":"0"
+                            }
+                        }>
+                            {item}
+                        </div>
                     
-                    <input
-                    key={index}
-                    className="relative w-2/3 text-center border border-blue-500 p-1 rounded-lg shadow-sm focus:outline-none focus:border-blue-700 focus:ring-2 focus:ring-blue-500"
-                    placeholder="..."
-                    value={inputValue || ""}
-                    onChange={(e) => handleInputChange(e, item)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          if (!isClick) {
-                            handleCheck();
-                          } else {
-                            handleNextQuest();
-                          }
-                        }
-                      }}
-                    />
-                    <div className="absolute top-20 left-30 px-5  rounded-lg bg-green-500 text-white " 
-                        style={
-                        {
-                            opacity:!isTrueValue&&isClick?"1":"0"
-                        }
-                    }>
-                        {item}
-                    </div>
+                    
+                    
                 </div>
               );
             } else {
