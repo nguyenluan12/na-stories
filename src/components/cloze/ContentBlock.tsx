@@ -30,11 +30,11 @@ export function ContentBlock({
   }) {
     const arr = content.split(" ");
     return (
-      <div className="w-full p-10 relative text-2xl">
+      <div className="w-full p-10  text-2xl">
         <div className="pt-5 pb-10 mr-5 ">
             <p className="w-fit text-3xl font-semibold border-b-2">Điền tiếp vào chỗ trống.</p>
           </div>
-        <div className="flex flex-row items-center justify-center">
+        <div className="relative flex flex-row items-center justify-center">
         <AudioPlayer src={"https://dailydictation.com/upload/general-english/1-first-snowfall-2019-03-14-04-19-38/2.mp3"} />
           {arr.map((item, index) => {
             if (gapIndexes.includes(index)) {
@@ -50,14 +50,14 @@ export function ContentBlock({
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                             if (!isClick) {
-                                handleCheck();
-                              } else {
-                                handleNextQuest();
-                              }
+                                handleCheck();}
+                            //   } else {
+                            //     handleNextQuest();
+                            //   }
                             }
                         }}
                         />
-                        <div className="absolute top-0 left-30 px-5  rounded-lg bg-green-500 text-white " 
+                        <div className="absolute top-[-35px] left-30 px-5  rounded-lg bg-purple-500 text-white " 
                             style={
                             {
                                 opacity:!isTrueValue&&isClick?"1":"0"

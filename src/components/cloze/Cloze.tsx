@@ -15,7 +15,7 @@ type Sentence = {
 };
 
 
-export default function Cloze({sentences}:{sentences:Sentence[]}) {
+export default function Cloze({sentences,title}:{sentences:Sentence[],title:string}) {
   
   const [idx, setIdx] = useState(0);
   const [quest, setQuest] = useState<Sentence[]>(sentences);
@@ -87,6 +87,7 @@ export default function Cloze({sentences}:{sentences:Sentence[]}) {
       <div className="w-1/2 p-5">
         <ClozeHeader2 progressValue={numPassed} max={total} />
       </div>
+      <p className="text-4xl font-bold text-green-700">{title}</p>
       {idx < quest.length && current ? (
         <PlayBlock sentences={sentences} 
                     current={current} 

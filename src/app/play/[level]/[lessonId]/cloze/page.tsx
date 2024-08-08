@@ -27,10 +27,10 @@ export default async function LessonPlay({ params, searchParams }: LessonPlayPro
   );
   console.log(lessonsList)
   const sentences = lessonsList[0]?.lesson||[];
-  
+  const title = lessonsList[0]?.title||''
   console.log(sentences)
   return(
-    <Cloze sentences={sentences} />
+    <Cloze sentences={sentences} title={title}/>
     // <></>
   )
 }
