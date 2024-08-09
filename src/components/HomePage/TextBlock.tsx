@@ -4,7 +4,7 @@ export default function TextBlock(){
     return(
         <div className="flex flex-col items-center text-center p-5">
         <WomanSvg />
-        <p className="text-3xl font-bold">Unofficial Duolingo Stories</p>
+        <p className="text-3xl font-bold">Official Naschool Stories</p>
         <p className="mt-5 font-regular text-lg w-2/3">
           A community project to bring the original Duolingo Stories to new languages.
           2385 stories in 80 courses and counting!

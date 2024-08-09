@@ -6,7 +6,7 @@ import MainBlock from "../../components/HomePage/MainBlock";
 
 const prisma = new PrismaClient();
 export default async function HomePage() {
-  const lessons = [
+  const lessons_icon = [
     {
       id: 0,
       lesson: [
@@ -79,19 +79,14 @@ export default async function HomePage() {
     },
   ];
   
-  const lessonsList = await prisma.lesson.findMany({
-    where:{
-        LessonLevel:"1"
-    }
-  }
-   
-  );
+  const lessonsList = await prisma.lesson_cloze.findMany({
+  });
 //   console.log(lessonsList)
   const lesson = [{ id:1,    
                     lesson:lessonsList.map((item,idx) =>({
                         name:item.title,
-                        icon:item.image,
-                        type:item.type
+                        icon:"https://ardslot.com/s/vi.svg",
+                        
                     }))
   }]
 // const lesson=lessonsList.map((item,idx) =>({

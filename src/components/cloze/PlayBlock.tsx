@@ -9,6 +9,7 @@ type Sentence = {
     content: string;
     translation: string;
     gapIndexes: number[];
+    audioUrl:string;
   };
 interface QuestSectionProps {
   sentences: Sentence[];
@@ -20,6 +21,7 @@ interface QuestSectionProps {
   handleCheck: () => void;
   handleNextQuest:() => void;
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
+  audioUrl:string;
 }
 
 export function PlayBlock({
@@ -32,6 +34,7 @@ export function PlayBlock({
   handleCheck,
   handleNextQuest,
   setIsClick,
+  audioUrl,
 }: QuestSectionProps){
   return (
     <div className="w-1/2 flex flex-col items-center">
@@ -47,6 +50,7 @@ export function PlayBlock({
             handleNextQuest={handleNextQuest}
             isTrueValue={isTrueValue}
             isClick={isClick}
+            audioUrl={audioUrl}
           />
           <p className="p-5">{current.translation}</p>
           <QuestButton

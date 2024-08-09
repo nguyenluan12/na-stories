@@ -10,20 +10,16 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
-model Lesson {
-    id          String      @id @default(cuid())
-    title       String
-    image       String
-    type        String
-    lesson      Json?
-    learned     String
-    listLesson  listLesson? @relation(fields: [LessonLevel], references: [level])
-    LessonLevel String?
+model lesson_cloze {
+    id     String @id @default(cuid())
+    title  String
+    lesson Json?
 }
 
-model listLesson {
-    level String   @id @default(cuid())
-    list  Lesson[]
+model lesson_listen_read {
+    id     String @id @default(cuid())
+    title  String
+    lesson Json?
 }
 
 model User {
@@ -35,4 +31,9 @@ model User {
     password      String
     createdAt     DateTime  @default(now())
     updatedAt     DateTime  @updatedAt
+}
+
+model audio {
+    id       String  @id @default(cuid())
+    audioUrl String?
 }

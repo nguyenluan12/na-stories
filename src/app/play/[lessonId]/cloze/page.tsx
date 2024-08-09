@@ -1,6 +1,6 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import React from "react";
-import Cloze from "../../../../../components/cloze/Cloze"
+import Cloze from "../../../../components/cloze/Cloze"
 
 interface LessonPlayProps {
   params: {
@@ -16,9 +16,9 @@ export default async function LessonPlay({ params, searchParams }: LessonPlayPro
   // console.log(params)
   const num = params
   console.log(num)
-  const lessonsList = await prisma.lesson.findMany({
+  const lessonsList = await prisma.lesson_cloze.findMany({
     where:{
-        LessonLevel:params.level,
+        
         id:params.lessonId
         
     }

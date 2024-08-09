@@ -23,9 +23,9 @@ interface LessonPlayProps {
 }
 export default async function ListenAndRead({ params, searchParams }: LessonPlayProps) {
   const prisma = new PrismaClient();
-  const lessonsList = await prisma.lesson.findMany({
+  const lessonsList = await prisma.lesson_listen_read.findMany({
     where:{
-        LessonLevel:params.level,
+        
         id:params.lessonId
         
     }

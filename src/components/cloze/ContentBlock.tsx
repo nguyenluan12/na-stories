@@ -6,6 +6,7 @@ type Sentence = {
     content: string;
     translation: string;
     gapIndexes: number[];
+    audioUrl:string;
   };
 export function ContentBlock({
     sentences,
@@ -16,7 +17,8 @@ export function ContentBlock({
     handleCheck,
     handleNextQuest,
     isTrueValue,
-    isClick
+    isClick,
+    audioUrl
   }: {
     sentences: Sentence[];
     content: string;
@@ -27,6 +29,7 @@ export function ContentBlock({
     handleNextQuest: () => void;
     isTrueValue: boolean;
     isClick: boolean;
+    audioUrl:string;
   }) {
     const arr = content.split(" ");
     return (
@@ -35,7 +38,7 @@ export function ContentBlock({
             <p className="w-fit text-3xl font-semibold border-b-2">Điền tiếp vào chỗ trống.</p>
           </div>
         <div className="relative flex flex-row items-center justify-center">
-        <AudioPlayer src={"https://dailydictation.com/upload/general-english/1-first-snowfall-2019-03-14-04-19-38/2.mp3"} />
+        <AudioPlayer src={audioUrl} />
           {arr.map((item, index) => {
             if (gapIndexes.includes(index)) {
               return (
@@ -56,8 +59,11 @@ export function ContentBlock({
                             //   }
                             }
                         }}
+                        style={{
+                            backgroundColor:isClick?(isTrueValue?"#88D66C" : "#FFAAAA"):"white"
+                        }}
                         />
-                        <div className="absolute top-[-35px] left-30 px-5  rounded-lg bg-purple-500 text-white " 
+                        <div className="absolute top-[-35px] left-30 px-5  rounded-lg bg-purple-400 text-white " 
                             style={
                             {
                                 opacity:!isTrueValue&&isClick?"1":"0"

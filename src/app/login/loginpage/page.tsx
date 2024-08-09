@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 
 export default function Loginpage() {
@@ -27,12 +28,14 @@ export default function Loginpage() {
                               className="w-full p-2 border-2 border-gray-300 rounded-2xl focus:outline-none focus:border-blue-500"
                           />
                       </div>
-                      <button
+                      <Link href="/home">
+                        <button
                           type="submit"
                           className="w-full p-1 my-2 border-2 border-blue-500 rounded-xl bg-blue-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
                           >
                           Login
-                      </button>
+                          </button>
+                      </Link>
                       <div className="flex ">
                           <p>Don't have an account?</p>
                           <p className="px-2 text-blue-400 cursor-pointer">Sign Up</p>

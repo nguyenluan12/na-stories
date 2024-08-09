@@ -12,6 +12,7 @@ type Sentence = {
   content: string;
   translation: string;
   gapIndexes: number[];
+  audioUrl:string;
 };
 
 
@@ -87,7 +88,7 @@ export default function Cloze({sentences,title}:{sentences:Sentence[],title:stri
       <div className="w-1/2 p-5">
         <ClozeHeader2 progressValue={numPassed} max={total} />
       </div>
-      <p className="text-4xl font-bold text-green-700">{title}</p>
+      <p className="text-4xl font-bold border-2 rounded-xl bg-gray-100 px-10 py-5">{title}</p>
       {idx < quest.length && current ? (
         <PlayBlock sentences={sentences} 
                     current={current} 
@@ -97,7 +98,8 @@ export default function Cloze({sentences,title}:{sentences:Sentence[],title:stri
                     handleInputChange={handleInputChange} 
                     handleCheck={handleCheck} 
                     handleNextQuest={handleNextQuest} 
-                    setIsClick={setIsClick} />
+                    setIsClick={setIsClick}
+                    audioUrl={current.audioUrl} />
       ) : (
 
         sentences?<ResultBlock wrongAnswers={wrongAnswers} sentences={sentences} />:<></>
