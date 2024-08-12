@@ -11,6 +11,7 @@ type Sentence = {
   person: string;
   content: string;
   translate: string;
+  audioUrl:string;
 };
 interface LessonPlayProps {
   params: {
@@ -25,9 +26,7 @@ export default async function ListenAndRead({ params, searchParams }: LessonPlay
   const prisma = new PrismaClient();
   const lessonsList = await prisma.lesson_listen_read.findMany({
     where:{
-        
         id:params.lessonId
-        
     }
   }
    

@@ -12,7 +12,7 @@ const pollyClient= new PollyClient({ region: "ap-southeast-1" });
 
 export async function generateAudio(prefix: string, sentence: Sentence) {
     const voiceIds = ["Danielle", "Gregory", "Joanna", "Kendra", "Kimberly", "Salli", "Joey", "Kevin", "Matthew"]
-  
+    // kevin:boy,  Kendra:grandma, 
     const randomVoiceId = voiceIds[Math.floor(Math.random() * voiceIds.length)];
   
     try {
@@ -23,7 +23,7 @@ export async function generateAudio(prefix: string, sentence: Sentence) {
         OutputS3KeyPrefix: prefix,
         Text: `<speak>${sentence.content}</speak>`||'',
         TextType: "ssml",
-        VoiceId: "Kevin",
+        VoiceId: "Salli",
         SampleRate: "22050",
       };
       const output = await pollyClient.send(

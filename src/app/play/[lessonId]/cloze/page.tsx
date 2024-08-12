@@ -15,7 +15,7 @@ const prisma = new PrismaClient();
 export default async function LessonPlay({ params, searchParams }: LessonPlayProps) {
   // console.log(params)
   const num = params
-  console.log(num)
+ 
   const lessonsList = await prisma.lesson_cloze.findMany({
     where:{
         
@@ -25,10 +25,10 @@ export default async function LessonPlay({ params, searchParams }: LessonPlayPro
   }
    
   );
-  console.log(lessonsList)
+
   const sentences = lessonsList[0]?.lesson||[];
   const title = lessonsList[0]?.title||''
-  console.log(sentences)
+
   return(
     <Cloze sentences={sentences} title={title}/>
     // <></>

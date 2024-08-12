@@ -13,7 +13,7 @@ const openai = new OpenAI();
 const prisma = new PrismaClient();
 
 // VOCAB
-  const generateVocab=async ()=>{
+  const generateVocab=async (title:string)=>{
     const Story = z.object({
         title: z.string(),
         lesson: z.array(z.object({
@@ -28,11 +28,14 @@ const prisma = new PrismaClient();
     model: "gpt-4o-2024-08-06",
     messages: [
         { role: "system", content: "You are best English teacher for foreigner" },
-        { role: "user", content: "Give an English vocalbulary(two or three word) for language beginer leaners with 10-15 words." },
+        { role: "user", content: "Give an English vocalbulary(two or three word) for language beginers with 10-15 words." },
         { role: "user", content: "Translate them to Vietnamese" },
         { role: "user", content: "Give a vocabulary each sentence" },
-        { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
-        { role: "user", content: "The gapIndexes should have one element" },
+        // { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
+        { role: "user", content: "The gapIndexes are not allowed to refer to punctuation in a sentence " },
+        { role: "user", content: `The title is ${title} ` },
+        { role: "user", content: "There must be space between words and punctuation marks, not attached" },
+        { role: "user", content: "The gapIndexes have one element" },
     ],
     response_format: zodResponseFormat(Story, "event"),
     });
@@ -109,6 +112,6 @@ const generateConversation = async () => {
     await prisma.$disconnect()
 }
 
-// await prisma.lesson_listen_read.deleteMany();
-generateVocab()
+// await prisma.lesson_cloze.deleteMany();
+generateVocab("Environment")
 // generateConversation()

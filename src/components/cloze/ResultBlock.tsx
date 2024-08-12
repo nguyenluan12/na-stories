@@ -9,15 +9,19 @@ type Sentence = {
     content: string;
     translation: string;
     gapIndexes: number[];
+    audioUrl: string;
   };
 export function ResultBlock({
   
     wrongAnswers,
     sentences,
+    // isAudioPlaying,setIsAudioPlaying
   }: {
     
     wrongAnswers: Sentence[];
     sentences: Sentence[];
+    // isAudioPlaying:boolean;
+    // setIsAudioPlaying: React.Dispatch<React.SetStateAction<boolean>>;
   }) {
     const numCorrect = sentences.length - wrongAnswers.length;
     const numWrong = wrongAnswers.length;
@@ -27,7 +31,7 @@ export function ResultBlock({
       <div className="flex flex-col items-center">
         
         <Result numWrong={numWrong} numCorrect={numCorrect}/>
-         <ReviewLesson sentences={sentences} isClick={isClick}/>
+         <ReviewLesson sentences={sentences} isClick={isClick} />
         <ActionButton isClick={isClick} setIsClick={setIsClick} />
       </div>
     );

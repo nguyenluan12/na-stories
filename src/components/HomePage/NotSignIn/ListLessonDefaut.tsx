@@ -4,7 +4,7 @@ type Lesson = {
    
     icon: string;
     name: string;
-    type: string;
+    
   };
   
   type LessonSet = {
@@ -15,7 +15,7 @@ type Lesson = {
     lessons: LessonSet[];
   }
   
-  export default function MainBlock({ lessons }:MainComponentProps) {
+  export default function ListLessonDefaut({ lessons }:MainComponentProps) {
     return(
         <div className="w-1/2 flex flex-row justify-center flex-wrap items-center pt-10 pb-10">
         {lessons.map((item, index) => (
@@ -27,7 +27,7 @@ type Lesson = {
             <div className="flex flex-row flex-wrap w-full">
               {item.lesson.map((list, idx) => (
                 <div key={idx} className="flex flex-col justify-between items-center cursor-pointer w-1/5 rounded-xl shadow-xl p-6 m-3 hover:bg-gray-50 shadow-sm transition-transform duration-200 hover:shadow-xl hover:scale-105 active:scale-95">
-                  <Link href={`/play/${idx+1}/cloze`} className="w-full">
+                  <Link href={`/play/1/cloze`} className="w-full">
                     <img className="w-full" src={list.icon} alt={list.name}></img>
                     <p className="font-semibold text-center">{list.name}</p>
                   </Link>

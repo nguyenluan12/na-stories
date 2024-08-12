@@ -22,6 +22,8 @@ interface QuestSectionProps {
   handleNextQuest:() => void;
   setIsClick: React.Dispatch<React.SetStateAction<boolean>>;
   audioUrl:string;
+  
+  
 }
 
 export function PlayBlock({
@@ -35,6 +37,9 @@ export function PlayBlock({
   handleNextQuest,
   setIsClick,
   audioUrl,
+ 
+  
+
 }: QuestSectionProps){
   return (
     <div className="w-1/2 flex flex-col items-center">
@@ -51,6 +56,8 @@ export function PlayBlock({
             isTrueValue={isTrueValue}
             isClick={isClick}
             audioUrl={audioUrl}
+            
+            
           />
           <p className="p-5">{current.translation}</p>
           <QuestButton

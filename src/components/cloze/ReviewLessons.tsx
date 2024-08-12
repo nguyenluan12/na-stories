@@ -1,4 +1,5 @@
-import React from 'react';
+"use client";
+import React, { useState } from 'react';
 import AudioPlayer from './AudioPlayer';
 
 type Sentence = {
@@ -6,7 +7,7 @@ type Sentence = {
   content: string;
   translation: string;
   gapIndexes: number[];
-  audioUrl:string;
+  audioUrl: string;
 };
 
 interface ReviewLessonProps {
@@ -15,6 +16,8 @@ interface ReviewLessonProps {
 }
 
 const ReviewLesson: React.FC<ReviewLessonProps> = ({ sentences, isClick }) => {
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+
   return (
     <div
       style={{
@@ -26,16 +29,19 @@ const ReviewLesson: React.FC<ReviewLessonProps> = ({ sentences, isClick }) => {
       <p className="font-bold text-2xl">Review Lesson</p>
       <div className="max-h-[450px] overflow-scroll mt-5 border-4 border-blue-200 rounded-lg px-20 py-10">
         {sentences.map((item, index) => (
-            <div key={index} className='flex flex-row'>
-                <AudioPlayer src={item.audioUrl}/>
-                <div
-                    
-                    className="p-5 border-2 transition-transform duration-300 border-white hover:shadow-xl hover:scale-105 hover:perspective-10 hover:border-blue-100 hover:rounded-lg hover:bg-blue-100"
-                > 
-                    <p className="text-base font-medium">{item.content}</p>
-                    <p className="text-xs pt-2">{item.translation}</p>
-                </div>
+          <div key={index} className='flex flex-row'>
+            <AudioPlayer 
+              src={item.audioUrl} 
+              isAudioPlaying={isAudioPlaying} 
+              setIsAudioPlaying={setIsAudioPlaying} 
+            />
+            <div
+              className="p-5 border-2 transition-transform duration-300 border-white hover:shadow-xl hover:scale-105 hover:perspective-10 hover:border-blue-100 hover:rounded-lg hover:bg-blue-100"
+            >
+              <p className="text-base font-medium">{item.content}</p>
+              <p className="text-xs pt-2">{item.translation}</p>
             </div>
+          </div>
         ))}
       </div>
     </div>

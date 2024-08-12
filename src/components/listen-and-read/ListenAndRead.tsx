@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import ClozeHeader2 from "../cloze/Header2"
 import Link from "next/link";
-import AudioPlayer from "../cloze/AudioPlayer";
+import AudioPlayer from "./AudioPlayer";
 type Sentence = {
     id: number;
     person: string;
@@ -65,10 +65,11 @@ export default function ListenAndReadBLock({sentences, title}:{sentences:Sentenc
 
 
 //   const title = "Can I have it?";
-console.log("translate: ", sentences[0]?.translate)
   const [items, setItems] = useState<Sentence[]>([]);
   const [idx, setIdx] = useState(0);
   const itemRefs = useRef<HTMLDivElement[]>([]);
+  const [isAudioPlaying, setIsAudioPlaying] =useState(false);
+
 
   const handleAddSentence = () => {
     if (idx < sentences.length) {
@@ -104,7 +105,7 @@ console.log("translate: ", sentences[0]?.translate)
                 if (el) itemRefs.current[index] = el;
                 }}
             >   
-                <AudioPlayer src={item.audioUrl} />
+                <AudioPlayer src={item.audioUrl} isAudioPlaying={isAudioPlaying} setIsAudioPlaying={setIsAudioPlaying}  />
                 <img
                 className="w-10 "
                 src={item.person === "kid" ? "/img/icon-kid.svg" : "/img/icon-man.svg"}
@@ -126,7 +127,7 @@ console.log("translate: ", sentences[0]?.translate)
             }}
             >
         {items.length < sentences.length ?
-        <button
+        (!isAudioPlaying?<button
           onClick={() => {
             handleAddSentence();
             scrollToBottom(items.length - 1);
@@ -134,7 +135,15 @@ console.log("translate: ", sentences[0]?.translate)
           className="w-40 h-full p-1 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-center text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
         >
           Next
-        </button>
+        </button>:<div
+        // onClick={() => {
+        //   handleAddSentence();
+        //   scrollToBottom(items.length - 1);
+        // }}
+        className="w-40 h-full p-1 px-4 my-2 border-2 border-gray-500 rounded-lg bg-gray-500 text-center text-white font-semibold text-lg shadow-lg "
+      >
+        Next
+      </div>)
         :<Link href={"/home"}
             className="w-40 h-full p-1 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-center text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
         >

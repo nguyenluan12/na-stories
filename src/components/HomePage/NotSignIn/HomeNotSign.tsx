@@ -1,12 +1,13 @@
 
 import HeaderSignIn from './HeaderSignIn';
 import TextBlock from '../TextBlock';
-import ListLesson from '../ListLesson';
 import { BoySvg, LockSvg } from '../../Svgs';
 import React from 'react';
+import ListLessonDefaut from './ListLessonDefaut';
 type Lesson = {
   icon: string;
   name: string;
+  
 };
 
 type LessonSet = {
@@ -26,7 +27,7 @@ export default function MainBlock({ lessons }:MainComponentProps) {
         <LockSvg />
         <p>You need to Log In to see more lessons</p>
     </div>
-      <ListLesson lessons={lessons} />
+      <ListLessonDefaut lessons={lessons} />
       
       
     </main>
