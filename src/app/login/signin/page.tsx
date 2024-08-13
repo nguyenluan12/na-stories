@@ -1,6 +1,8 @@
 import Link from "next/link";
-
-
+import { PrismaClient } from '@prisma/client'
+import { NextAuthOptions } from 'next-auth'
+import NextAuth from 'next-auth/next'
+import GoogleProvider from 'next-auth/providers/google'
 export default function Loginpage() {
 
   return (
@@ -37,6 +39,9 @@ export default function Loginpage() {
                           </button>
                       </Link>
                       <div className="flex ">
+                            <Providers>
+                                <Layout>{children}</Layout>
+                            </Providers>
                           <p>Don't have an account?</p>
                           <p className="px-2 text-blue-400 cursor-pointer">Sign Up</p>
                       </div>

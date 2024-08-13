@@ -22,18 +22,49 @@ model lesson_listen_read {
     lesson Json?
 }
 
-model User {
-    id            Int       @id @default(autoincrement())
-    name          String?
-    email         String    @unique
-    emailVerified DateTime?
-    image         String?
-    password      String
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-}
+// model User {
+//     id            Int       @id @default(autoincrement())
+//     name          String?
+//     email         String    @unique
+//     emailVerified DateTime?
+//     image         String?
+//     password      String
+//     createdAt     DateTime  @default(now())
+//     updatedAt     DateTime  @updatedAt
+// }
 
 model audio {
     id       String  @id @default(cuid())
     audioUrl String?
 }
+
+model User {
+    id        String   @id @default(dbgenerated("concat('usr_', replace(cast(gen_random_uuid() as text), '-', ''))")) @db.Text
+    email     String   @unique
+    name      String?
+    avatar    String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// model Account {
+//     id                String  @id @default(cuid())
+//     userId            String
+//     provider          String
+//     providerAccountId String
+//     type              String
+//     access_token      String?
+//     token_type        String?
+//     scope             String?
+//     id_token          String?
+//     session_state     String?
+//     user              User    @relation(fields: [userId], references: [id])
+// }
+
+// model Session {
+//     id           String   @id @default(cuid())
+//     sessionToken String   @unique
+//     userId       String
+//     expires      DateTime
+//     user         User     @relation(fields: [userId], references: [id])
+// }
