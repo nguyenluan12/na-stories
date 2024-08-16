@@ -1,19 +1,8 @@
-// // src/app/api/lessons/route.ts
+import { PrismaClient } from "@prisma/client";
 
-// import { NextResponse } from 'next/server';
-// import { PrismaClient } from '@prisma/client';
-
-// const prisma = new PrismaClient();
-
-// export async function GET() {
-//   try {
-//     const lessons = await prisma.lesson_cloze.findMany();
-//     console.log('lesson')
-//     console.log(lessons)
-//     return NextResponse.json(lessons);
-//   } catch (error) {
-//     return NextResponse.error();
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// }
+const prisma = new PrismaClient();
+   
+  export const lessonsListCloze = await prisma.lesson_cloze.findMany({
+  });
+  export const lessonsListListen = await prisma.lesson_listen_read.findMany({
+});

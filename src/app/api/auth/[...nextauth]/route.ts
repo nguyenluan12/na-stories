@@ -1,8 +1,7 @@
-import { prisma } from '../../../../lib/prisma'
-import { session } from '../../../../lib/session'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '~/lib/prisma'
+import { session } from '~/lib/session'
 import { NextAuthOptions } from 'next-auth'
-import NextAuth, { getServerSession } from 'next-auth/next'
+import NextAuth from 'next-auth/next'
 import GoogleProvider from 'next-auth/providers/google'
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!
@@ -31,9 +30,11 @@ const authOption: NextAuthOptions = {
         create: {
           email: profile.email,
           name: profile.name,
+          avatar:profile.image
         },
         update: {
           name: profile.name,
+          avatar:profile.image
         },
       })
       return true
@@ -53,6 +54,17 @@ const authOption: NextAuthOptions = {
       }
       return token
     },
+    // async redirect({ url, baseUrl }) {
+    //     // Kiểm tra URL để quyết định trang đích sau khi đăng nhập
+    //     if (url.startsWith(baseUrl)) {
+    //       return url
+    //     }
+    //     // Chuyển hướng đến trang mong muốn (vd: /dashboard)
+    //     return "/home"
+    //   }
+    async redirect({ url, baseUrl }) {
+        return baseUrl + '/home';
+    }
   },
 }
 
