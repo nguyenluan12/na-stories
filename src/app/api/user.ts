@@ -1,8 +1,8 @@
+// src/app/api/user.ts
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma as prisma } from '~/lib/prisma';
+import { prisma } from '~/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("calling api")
   const { method } = req;
 
   switch (method) {
@@ -40,7 +40,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse) {
 
 async function handlePut(req: NextApiRequest, res: NextApiResponse) {
   const { id, name, email, password, date, phoneNumber } = req.body;
-    console.log("handle Put")
+
   if (!id) {
     return res.status(400).json({ error: 'User ID is required' });
   }

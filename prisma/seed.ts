@@ -114,6 +114,6 @@ const generateConversation = async () => {
 
 // await prisma.user.deleteMany();
 const user = await prisma.user.findMany();
-console.log(user)
+console.log(user);
 // generateVocab("Environment")
 // generateConversation()

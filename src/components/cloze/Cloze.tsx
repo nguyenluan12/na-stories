@@ -28,7 +28,7 @@ export default function Cloze({ sentences, title }: { sentences: Sentence[], tit
   const [wrongAnswers, setWrongAnswer] = useState<Sentence[]>([]);
   const [isClick, setIsClick] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
-  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -99,11 +99,10 @@ export default function Cloze({ sentences, title }: { sentences: Sentence[], tit
           handleNextQuest={handleNextQuest}
           setIsClick={setIsClick}
           audioUrl={current.audioUrl}
-          isAudioPlaying={isAudioPlaying}
-          setIsAudioPlaying={setIsAudioPlaying}
+          
            />
       ) : (
-        sentences ? <ResultBlock wrongAnswers={wrongAnswers} sentences={sentences} isAudioPlaying={isAudioPlaying} setIsAudioPlaying={setIsAudioPlaying} /> : <></>
+        sentences ? <ResultBlock wrongAnswers={wrongAnswers} sentences={sentences} /> : <></>
       )}
       {/* <audio ref={audioRef} src='/audios/correct.mp3' /> */}
       <audio ref={audioRef} src={isTrueValue?'/audios/correct.mp3':'/audios/incorrect.mp3' }/>

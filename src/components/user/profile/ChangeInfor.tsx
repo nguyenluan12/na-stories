@@ -22,7 +22,7 @@ export default function ChangeInfor({ user }: { user: User }) {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put('/api/user', {
+      const response = await axios.post('http:localhost/api/user', {
         id: user?.id,
         name,
         email,
@@ -45,7 +45,7 @@ export default function ChangeInfor({ user }: { user: User }) {
         <img className="w-7" src="https://ardslot.com/s/vi.svg" alt="country-img" />
       </div>
 
-      <div className="flex flex-col w-full m-5 p-3 border-2 rounded-lg ">
+      <div className="flex flex-col w-full m-5 p-3 border-2 rounded-lg">
         <div className="justify-around w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50">
           <p><strong>Email</strong></p>
           <div className="justify-around h-1/2 w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-gray-300 text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50">

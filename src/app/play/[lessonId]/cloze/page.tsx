@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import React from "react";
 import Cloze from "../../../../components/cloze/Cloze"
+import { promise } from "zod";
 
 interface LessonPlayProps {
   params: {
@@ -17,17 +18,13 @@ export default async function LessonPlay({ params, searchParams }: LessonPlayPro
   const num = params
  
   const lessonsList = await prisma.lesson_cloze.findMany({
-    where:{
-        
+    where:{ 
         id:params.lessonId
-        
     }
-  }
-   
-  );
+  });
 
   const sentences = lessonsList[0]?.lesson||[];
-  const title = lessonsList[0]?.title||''
+  const title = lessonsList[0]?.title||'';
 
   return(
     <Cloze sentences={sentences} title={title}/>

@@ -36,3 +36,10 @@
 
 //   res.status(200).json({ token });
 // }
+export default function handler(req, res) {
+    res.status(200).json({ 
+      name: 'Manh',
+      age: 21,
+      address: 'Ha Noi',
+    })
+  }

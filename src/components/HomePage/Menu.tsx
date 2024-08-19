@@ -1,6 +1,8 @@
 
 import { signOut } from "next-auth/react";
+
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function Menu(){
     return (
@@ -15,12 +17,15 @@ export default function Menu(){
           >
             Profile
           </Link>
-          <Link href={"/user/setting"}
+          {/* <Link href={"/user/setting"}
             className="cursor-pointer flex items-center w-full h-1/2 px-7 py-2 my-2 border-2 border-b-4 border-gray-200 rounded-lg bg-gray-50 text-sm font-bold text-lg transition-transform duration-200 hover:shadow-xl hover:scale-105 active:scale-95"
           >
             Setting
-          </Link>
-          <div onClick={() => signOut({ callbackUrl: "" })}
+          </Link> */}
+          <div onClick={() => {
+            signOut({ callbackUrl: "" });
+            redirect('/')
+        }}
             className="cursor-pointer flex items-center w-full h-1/2 px-7 py-2 my-2 border-2 border-b-4 border-gray-200 rounded-lg bg-gray-50 text-sm font-bold text-lg text-nowrap transition-transform duration-200 hover:shadow-xl hover:scale-105 active:scale-95"
           >
             Log out

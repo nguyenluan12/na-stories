@@ -19,18 +19,7 @@ interface MainComponentProps {
 }
 
 export default function Home({ lessonCloze, lessonListen }: MainComponentProps) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status !== "authenticated") {
-      router.push("/home");
-    }
-  }, [status, router]);
-
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
+  
 
   return (
     <HomePage lessonCloze={lessonCloze} lessonListen={lessonListen} />

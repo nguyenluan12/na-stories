@@ -30,7 +30,7 @@ export default function ProfileContent({users}: {users:User[] }) {
     }
 
     if (session) {
-    
+      console.log(session)
       setImgSrc(session.user?.image || 'https://i.pinimg.com/564x/ed/df/0c/eddf0c8ccc25b638465a8eecbbb5bc1f.jpg');
       
       users.map((item,idx)=>{
@@ -43,23 +43,23 @@ export default function ProfileContent({users}: {users:User[] }) {
     }
   }, [session, status]);
 
-//   useEffect(() => {
-//     const fetchUser = async () => {
-//       if (email) {
+  // 
+  //   const fetchUser = async () => {
+  //     if (email) {
 
-//         try {
-//             console.log(email)
-//             const response = await axios.get(`/api/user?email=${encodeURIComponent(email)}`);
+  //       try {
+  //           console.log(email)
+  //           const response = await axios.get(`/api/user?email=${encodeURIComponent(email)}`);
 
-//           setUser(response.data);
-//         } catch (error) {
-//           console.error('Error fetching user:', error);
-//         }
-//       }
-//     };
+  //         setUser(response.data);
+  //       } catch (error) {
+  //         console.error('Error fetching user:', error);
+  //       }
+  //     }
+  //   };
 
-//     fetchUser();
-//   }, [email]);
+  //   fetchUser();
+  // }, [email]);
 
   return (
     <div className="flex items-center justify-center min-h-screen">

@@ -16,10 +16,8 @@ export default function LoginPage() {
 //   })
   useEffect(() => {
     if (status === "authenticated") {
-        console.log(session)
-    //   redirect("/home");
-    }else{
-        console.log("none")
+       
+      redirect("/home");
     }
   }, [status]);
 
