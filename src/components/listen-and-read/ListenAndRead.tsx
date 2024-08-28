@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import ClozeHeader2 from "../cloze/Header2"
 import Link from "next/link";
 import AudioPlayer from "./AudioPlayer";
+import { WomanSvg } from "../Svgs";
 type Sentence = {
     id: number;
     person: string;
@@ -89,14 +90,23 @@ export default function ListenAndReadBLock({sentences, title}:{sentences:Sentenc
 
   return (
     <div className="flex items-center flex-col p-20  w-screen h-screen">
-      <div className="w-1/2 min-w-72 fixed  top-0 pb-10 z-50 bg-white">
+      <div className="w-full flex items-center justify-center min-w-72 fixed  top-0 pb-10 z-50 bg-white">
         <ClozeHeader2 progressValue={items.length} max={sentences.length} />
       </div>
+      <div className="w-1/2 min-w-72 text-2xl font-semibold">
+        <p className="border-b-2 w-fit">Listen And Repeat</p>
+      </div>
       <div className="flex flex-col items-center mb-4 w-fit">
-        <img alt="icon lesson" src="/img/icon-lesson.svg" className="mr-4" />
+        {/* <img alt="icon lesson" src="/img/icon-lesson.svg" className="mr-4" /> */}
+        <img src="/img/listening-ani.gif"/>
         <h1 className="text-2xl font-bold">{title}</h1>
       </div>
-      <div className="w-2/5 min-w-96 p-5 mb-20 rounded-xl">
+      <div 
+        style={{
+          scrollbarWidth: "none", /* Firefox */
+          msOverflowStyle: "none", /* IE and Edge */
+        }}
+        className="w-2/5 min-w-96 px-10 min-h-[700px] p-5 mb-20 rounded-xl shadow-md overflow-scroll">
         {items.map((item, index) => (<div>
             <div
                 key={item.id}
@@ -108,7 +118,7 @@ export default function ListenAndReadBLock({sentences, title}:{sentences:Sentenc
                 <AudioPlayer src={item.audioUrl} isAudioPlaying={isAudioPlaying} setIsAudioPlaying={setIsAudioPlaying}  />
                 <img
                 className="w-10 "
-                src={item.person === "kid" ? "/img/icon-kid.svg" : "/img/icon-man.svg"}
+                src={item.person === "woman" ? "/img/woman.png" : "/img/icon-man.svg"}
                 alt={`${item.person} icon`}
                 />
                 <p className="p-1 px-5 m-5 border-2 rounded-lg">{item.content}</p>
@@ -117,6 +127,7 @@ export default function ListenAndReadBLock({sentences, title}:{sentences:Sentenc
                 </p>
             </div>
           </div>))}
+          <div className="min-h-32"></div>
       </div>
       <div className="h-100">
         <p className="h-[50px] block text-white">.</p>
@@ -144,7 +155,7 @@ export default function ListenAndReadBLock({sentences, title}:{sentences:Sentenc
       >
         Next
       </div>)
-        :<Link href={"/home"}
+        :<Link href={"/home#listen"}
             className="w-40 h-full p-1 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-center text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95"
         >
             Finish

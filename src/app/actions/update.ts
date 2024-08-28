@@ -14,7 +14,14 @@ export async function updateData(email: string, imgSrc: string, name: string) {
         name: name,
       },
     });
-  
-    
+  }
+  export async function updateImg(email:string,url:string) {
+    console.log(email)
+    email && await prisma.user.update({
+      where:{email:email},
+      data:{
+        avatar:url,
+      }
+    })
   }
   

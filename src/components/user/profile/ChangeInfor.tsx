@@ -15,7 +15,8 @@ type User = {
   date: string | null;
 } | null;
 
-export default function ChangeInfor({ user }: { user: User }) {
+export default function ChangeInfor({imgSrc, user }: {imgSrc:string, user: User }) {
+  console.log(user)
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [password, setPassword] = useState('');
@@ -23,7 +24,7 @@ export default function ChangeInfor({ user }: { user: User }) {
   const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || '');
   const [state, action, pending] = useActionState(updateInfor, undefined);
   const [showPassword, setShowPassword] = useState(false);
-  
+  console.log(email)
   return (
     <div className="w-1/2 min-w-72 flex flex-col items-center justify-center">
       <div className="flex flex-row items-center justify-center gap-3 pt-3 text-2xl font-semibold">
@@ -34,8 +35,8 @@ export default function ChangeInfor({ user }: { user: User }) {
       <form action={action} className="flex flex-col w-full m-5 p-3 border-2 rounded-lg">
         <div className="justify-around w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50">
           <p><strong>Email</strong></p>
-          <input id='email' name='email' className="justify-around h-1/2 w-full p-2 my-3 focus:outline-none border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-gray-300 text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50"
-          value={email}
+          <input id='email' name='email'  className=" justify-around h-1/2 w-full p-2 my-3 focus:outline-none border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-gray-300 text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50"
+          value={email} 
           >
             
           </input>
@@ -110,14 +111,35 @@ export default function ChangeInfor({ user }: { user: User }) {
         <div className="justify-around w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50">
           <p><strong>Phone</strong></p>
           <input
-            type="number"
+            type="text"
             id="phone"
             name="phone"
             className="justify-around h-1/2 w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-200"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
+          {(state?.errors?.phoneNumber) ? (
+            <div className="text-red-500">
+            
+              <ul>
+                {state.errors.phoneNumber.map((error) => (
+                  <li key={error}> {error}</li>
+                ))}
+              </ul>
+            </div>
+          ):<></>}
         </div>
+        {/* <div className="justify-around w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-50">
+          <p><strong>Change Avatar</strong></p>
+          <input
+            type="text"
+            id="imgUrl"
+            name="imgUrl"
+            className="justify-around h-1/2 w-full p-2 my-3 border-2 border-gray-100 rounded-xl bg-gray-50 font-large text-lg shadow transition-transform duration-300 hover:bg-blue-10 hover:border-blue-200"
+            value={imgSrc}
+            // onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+        </div> */}
         <button
           type='submit'
           className="mt-4 bg-blue-500 text-white p-2 rounded-lg"

@@ -15,6 +15,7 @@ export default function Logout() {
   onClick={()=>{
     handleLogout();
     signOut({ callbackUrl: "" });
+    // window.location.reload();
     
 }}>Logout</button>
 );

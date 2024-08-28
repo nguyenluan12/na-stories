@@ -67,7 +67,11 @@ export default function Dictation({data}:datatype){
             <HomeHeader/>
             
             <div className=" w-full flex flex-col items-center justify-center">
-                <div className="w-1/2 text-3xl font-sans py-10"><p className="border-b-2 w-fit text-nowrap">Dictation Test</p></div>
+                <div className="w-1/2 flex flex-row gap-16 text-3xl font-sans py-10">
+                    <p className="border-b-2 h-fit w-fit text-nowrap">Dictation Test</p>
+              
+                </div>
+                
                 <p className="p-10 mb-10 border-2 text-center text-2xl font-bold bg-gray-200 rounded-xl w-fit">{data.title}</p>
                 
                 {currentIdx<=lesson.length ? <div  className="w-1/2  rounded-lg flex flex-col items-center min-w-80 p-10 shadow-lg ">
@@ -174,7 +178,7 @@ export default function Dictation({data}:datatype){
             </div>
             }
             </div>
-
+            <div className="min-h-48"></div>
         </div>
     )
 }

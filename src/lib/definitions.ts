@@ -62,8 +62,11 @@ export const updateInforSchema = z.object({
     ), {
       message: 'Verify password must be at least 8 characters long, contain at least one letter, one number, and one special character, or be empty.'
     }),
-  phoneNumber: z.string(),
+  phoneNumber: z.string()
+  .min(10, { message: 'Be at least 10 characters long' })
+  .regex(/^\d+$/, { message: 'Phone number must contain only digits' }),
   date: z.string(),
+
 });
 
 export type FormState =
@@ -73,6 +76,19 @@ export type FormState =
         email?: string[]
         password?: string[]
         verifyPassword?:string[]
+        
+      }
+      message?: string
+    }
+  | undefined
+  export type FormStateUpdate =
+  | {
+      errors?: {
+        name?: string[]
+        email?: string[]
+        password?: string[]
+        verifyPassword?:string[]
+        
       }
       message?: string
     }
@@ -86,7 +102,7 @@ export type FormState =
         title?: string[]
         
       }
-      message?: string
+      message?: JSON
     }
   | undefined
 export const LogoutForm =z.object({})

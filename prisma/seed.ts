@@ -66,57 +66,66 @@ const prisma = new PrismaClient();
 //   }
 
 // VOCAB
-//   const generateVocab=async (title:string)=>{
-//     const Story = z.object({
-//         title: z.string(),
-//         lesson: z.array(z.object({
-//         id: z.string(),
-//         content: z.string(),
-//         translation: z.string(),
-//         gapIndexes: z.array(z.number()),
-//         })),
-//     });
+  const generateVocab=async (title:string)=>{
+    const Story = z.object({
+        title: z.string(),
+        lesson: z.array(z.object({
+        id: z.string(),
+        content: z.string(),
+        translation: z.string(),
+        gapIndexes: z.array(z.number()),
+        })),
+    });
 
-//     const completion = await openai.beta.chat.completions.parse({
-//     model: "gpt-4o-2024-08-06",
-//     messages: [
-//         { role: "system", content: "You are best English teacher for foreigner" },
-//         { role: "user", content: "Give an English vocalbulary(two or three word) for language beginers with 10-15 words." },
-//         { role: "user", content: "Translate them to Vietnamese" },
-//         { role: "user", content: "Give a vocabulary each sentence" },
-//         // { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
-//         { role: "user", content: "The gapIndexes are not allowed to refer to punctuation in a sentence " },
-//         { role: "user", content: `The title is ${title} ` },
-//         { role: "user", content: "There must be space between words and punctuation marks, not attached" },
-//         { role: "user", content: "The gapIndexes have one element" },
-//     ],
-//     response_format: zodResponseFormat(Story, "event"),
-//     });
+    const completion = await openai.beta.chat.completions.parse({
+    model: "gpt-4o-2024-08-06",
+    messages: [
+        { role: "system", content: "You are best English teacher for foreigner" },
+        { role: "user", content: "Give an English vocalbulary(two or three word) for language beginers with 10-15 words." },
+        { role: "user", content: "Translate them to Vietnamese" },
+        { role: "user", content: "Give a vocabulary each sentence" },
+        // { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
+        { role: "user", content: "The gapIndexes are not allowed to refer to punctuation in a sentence " },
+        { role: "user", content: `The title is ${title} ` },
+        { role: "user", content: "There must be space between words and punctuation marks, not attached" },
+        { role: "user", content: "The gapIndexes have one element" },
+    ],
+    response_format: zodResponseFormat(Story, "event"),
+    });
 
-//     const event = completion.choices[0]?.message.parsed;
-    
-//     const lesson = await Promise.all(event?.lesson.map(async (item) => {
-//         const text = {
-//             id: "1",
-//             content: item.content,
-//         };
-//         const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
-//         return {
-//             id: item.id,
-//             content: item.content,
-//             translation: item.translation,
-//             gapIndexes: item.gapIndexes,
-//             audioUrl: audioUrl,
-//         };
-//     }) || []);
-//     await prisma.lesson_cloze.create({
-//             data: {
-//             title: event?.title||'',
-//             lesson: lesson
-//             }
-//         });
-//     await prisma.$disconnect()
-//   }
+    const event = completion.choices[0]?.message.parsed;
+    // GENERATE IMG
+    const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: event?.title||'',
+        n: 1,
+        size: "1024x1024",
+    });
+    const image_url = response?.data[0]?.url;
+    const lesson = await Promise.all(event?.lesson.map(async (item) => {
+        const text = {
+            id: "1",
+            content: item.content,
+        };
+        const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
+        return {
+            id: item.id,
+            content: item.content,
+            translation: item.translation,
+            gapIndexes: item.gapIndexes,
+            audioUrl: audioUrl,
+            
+        };
+    }) || []);
+    await prisma.lesson_cloze.create({
+            data: {
+            title: event?.title||'',
+            lesson: lesson,
+            img: image_url
+            }
+        });
+    await prisma.$disconnect()
+  }
 
   // // CONVERSATION
 const generateConversation = async (topic:string) => {
@@ -145,6 +154,16 @@ const generateConversation = async (topic:string) => {
 
     const event = completion.choices[0]?.message.parsed;
     const title = event?.title || '';
+    
+    // GENERATE IMG
+    const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: event?.title||'',
+        n: 1,
+        size: "1024x1024",
+    });
+    const image_url = response?.data[0]?.url;
+    console.log(image_url)
     const lesson = await Promise.all(event?.lesson.map(async (item) => {
         const text = {
             id: "1",
@@ -162,7 +181,8 @@ const generateConversation = async (topic:string) => {
     await prisma.lesson_listen_read.create({
         data: {
         title: title,
-        lesson: lesson
+        lesson: lesson,
+        img : image_url
         }
     });
     await prisma.$disconnect()
@@ -217,8 +237,8 @@ const generateDictation = async (topic:string) => {
 // await prisma.user.deleteMany();
 // const user = await prisma.user.findMany();
 // console.log(user);
-// generateVocab("Tradition Festival")
+generateVocab("Tradition Festival")
 
-generateDictation("Mark's Big Game")
+// generateDictation("Mark's Big Game")
 // generateStory('snow white')
 // generateConversation('Movies and TV Shows')

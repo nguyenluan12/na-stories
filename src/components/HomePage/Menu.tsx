@@ -86,8 +86,8 @@ export default function Menu(){
             <details >
               <summary>Advance</summary>
               <ul>
-                <li><a>Grammar Checking</a></li>
-                <li><a>AI Reading</a></li>
+                <li><Link href={'/Advanced/grammar'}>Grammar Checking</Link></li>
+                <li><Link href={'/Advanced/story'}>AI Reading</Link></li>
               </ul>
             </details>
           </li>

@@ -75,6 +75,7 @@ model storyGenerated {
     content   String
     translate String
     ask       Json
+    img       String
 }
 
 // model Account {

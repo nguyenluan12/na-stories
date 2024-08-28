@@ -24,7 +24,7 @@ async function ProfileWrapper() {
       }):
           await prisma.user.findMany();
    
-          
+
   return (
     <>
       <HomeHeader />

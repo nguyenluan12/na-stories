@@ -1,5 +1,5 @@
 "use server"
-import { SignupFormSchema,SigninFormSchema, FormState, LogoutForm, updateInforSchema, generateStoryForm, StoryFormState } from '../../lib/definitions'
+import { SignupFormSchema,SigninFormSchema, FormState, LogoutForm, updateInforSchema, generateStoryForm, StoryFormState, FormStateUpdate } from '../../lib/definitions'
 import bcrypt from 'bcryptjs'; 
 import { prisma } from '../../lib/prisma';
 import { redirect } from 'next/navigation';
@@ -127,13 +127,16 @@ export async function updateInfor(state: FormState, formData: FormData) {
     password: formData.get('password')||'',
     verifyPassword:formData.get('verifyPassword')||'',
     phoneNumber:formData.get('phone'),
-    date:formData.get('date')
+    date:formData.get('date'),
+    // imgSrc: formData.get('imgUrl')
 
   })
   
   // If any form fields are invalid, return early
+  console.log(formData.get('email'))
   if (!validatedFields.success) {
     console.log('not valid')
+    console.log(validatedFields.error.flatten().fieldErrors)
     return {
       errors: validatedFields.error.flatten().fieldErrors,
     }
@@ -229,14 +232,14 @@ export async function generateStory(state: StoryFormState, formData: FormData){
 
   const event = completion.choices[0]?.message.parsed;
   // GENERATE IMG
-  // const response = await openai.images.generate({
-  //   model: "dall-e-3",
-  //   prompt: event?.title||'',
-  //   n: 1,
-  //   size: "1024x1024",
-  // });
-  // const image_url = response?.data[0]?.url;
-  // console.log(image_url)
+  const response = await openai.images.generate({
+    model: "dall-e-3",
+    prompt: event?.title||'',
+    n: 1,
+    size: "1024x1024",
+  });
+  const image_url = response?.data[0]?.url;
+  console.log(image_url)
   // console.log(event)
   // // const lesson = await Promise.all(event?.lesson.map(async (item) => {
   // //     const text = {
@@ -263,13 +266,23 @@ export async function generateStory(state: StoryFormState, formData: FormData){
   if (validatedFields.success) {
     console.log(event)
     console.log('valid')
+    await prisma.storyGenerated.create({
+      data: {
+        content:event?.content||'',
+        title:event?.title||'',
+        translate: event?.translation||'',
+        ask: event?.ask||{},
+        img: image_url||'',
+      }
+    });
+    await prisma.$disconnect()
     return {
       message:{
         content:event?.content,
         title:event?.title,
         translate: event?.translation,
-        ask: event?.ask
-        // img: image_url || ''
+        ask: event?.ask,
+        img: image_url || ''
     }}
   }else{
     return{
@@ -278,4 +291,70 @@ export async function generateStory(state: StoryFormState, formData: FormData){
     }
     }
   }
+  
+}
+export async function CheckSentences(state: StoryFormState, formData: FormData){
+  console.log("Checking Sentences")
+
+
+  const validatedFields = generateStoryForm.safeParse({
+    title: formData.get('title'),
+
+  })
+  console.log(formData.get('title'))
+  
+  const Story = z.object({
+      id: z.string(),
+      ask: z.array(
+       z.object({
+        sentences: z.string(), // câu trong đoạn văn (chat gpt sẽ phải phân tích tính đúng sai của từng câu văn)
+        check: z.boolean(), //return true nễu câu đó hợp lý, false nếu câu đó sai ngứ pháp hoặc từ vựng
+        answer: z.string(), // Đáp án sau khi chỉnh sửa câu
+        reason: z.string()  // Lý do sai của câu đó
+       })
+      )
+      
+  });
+
+  const completion = await openai.beta.chat.completions.parse({
+    model: "gpt-4o-2024-08-06",
+    messages: [
+        { role: "system", content: "You are an expert English grammar checker." },
+        { 
+          role: "user", 
+          content: `You will be given sentence numbers in English. Your task is:
+          1. Analyze each sentence to find grammatical and vocabulary errors.
+          2. For each sentence, return:
+              - “check”: true if the sentence is grammatically correct, or false if there are errors.
+              - “answer”: Corrected sentence (if necessary).
+              - "reason": Briefly explain the error and how to fix it, if any. If the sentence is correct, send a short 2-4 word compliment to encourage the student.`
+        },
+        { role: "user", content: `The sentences are "${validatedFields.data?.title}" ` },
+        // { role: "user", content: "Translate the story to Vietnamese after checking the sentences." }
+    ],
+    response_format: zodResponseFormat(Story, "event"),
+  });
+  
+
+// Set a `name` that ends with .png so that the API knows it's a PNG image
+
+
+  const event = completion.choices[0]?.message.parsed;
+  console.log(event?.ask)
+  if (validatedFields.success) {
+    // console.log(event)
+    console.log('valid')
+    return {
+      message:{
+        list: event?.ask
+    }}
+  }else{
+    console.log(validatedFields.error)
+    return{
+      errors:{
+        title: ['Fail to generate'],
+    }
+    }
+  }
+  
 }

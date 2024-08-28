@@ -29,6 +29,7 @@ type Lesson = {
   }
 
 export default function HomePage({isCookie, lessonCloze,lessonListen,lessonDictation}:MainComponentProps) {
+  
     const { data: session, status } = useSession();
   const router = useRouter();
   // if(session){
@@ -36,7 +37,7 @@ export default function HomePage({isCookie, lessonCloze,lessonListen,lessonDicta
   // }
   useEffect(() => {
     if (session === null&&!isCookie) {
-      redirect("/login/signin");
+      router.push("/login/signin");
     }
   }, [status, router]);
 
