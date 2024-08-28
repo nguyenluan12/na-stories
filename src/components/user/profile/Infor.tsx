@@ -11,11 +11,12 @@ type user= {
     } | null
 
 export default function Infor({user}:{user:user}){
+   
     return(
         
-        <div className="w-1/2 flex flex-col items-center justify-center">
+        <div className="w-1/2 min-w-72 flex flex-col items-center justify-center">
             <div className="flex flex-row items-center justify-center gap-3 pt-3 text-2xl font-semibold">
-                    <p>{user?.name}</p>
+                    <p className="">{user?.name}</p>
                     <img className="w-7" src="https://ardslot.com/s/vi.svg" alt="country-img" />
             </div>
         

@@ -7,16 +7,16 @@ interface ActionFooterProps {
 export default function QuestButton({isClick,isTrueValue,handleNextQuest,handleCheck}:ActionFooterProps){
 
     return(
-        <div className="fixed bottom-0 flex items-center justify-center border-t-2 w-full h-20" style={{ backgroundColor: isClick ? (isTrueValue ? "#88D66C" : "#FFAAAA") : "white" }}>
-            <div className="fixed  flex flex-row items-center bottom-5 left-20  mr-40"
-                style={{ opacity: isClick ? "1" : "0" }}> 
+        <div className="fixed bottom-0 flex items-center justify-around border-t-2 w-full h-20" style={{ backgroundColor: isClick ? (isTrueValue ? "#88D66C" : "#FFAAAA") : "white" }}>
+            <div className=" flex flex-col min-w-48 p-2 items-center justify-center "
+                style={{ display: !isClick ? "none" : "flex" }}> 
                 <img
                 src={isTrueValue ? "https://cdn-icons-png.flaticon.com/128/5610/5610944.png" : "https://cdn-icons-png.flaticon.com/128/16206/16206622.png"}
-                className="w-10 mr-5"
-                style={{ opacity: isClick ? "1" : "0" }}
+                className="w-7"
+                // style={{ opacity: isClick ? "1" : "0" }}
                 alt="status icon"
                 />
-                <p className="text-white text-xl font-bold">{isTrueValue?"Correct.":"Wrong! Try again."} </p>
+                <p className="text-white text-xl  font-bold">{isTrueValue?"Correct.":"Wrong! Try again."} </p>
             </div>
             {isClick ? (
               <button

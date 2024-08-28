@@ -84,7 +84,7 @@ export default function Cloze({ sentences, title }: { sentences: Sentence[], tit
 
   return (
     <div className="relative h-full flex flex-col justify-center items-center">
-      <div className="w-1/2 p-5">
+      <div className="w-1/2 p-5 w-full flex items-center justify-center">
         <ClozeHeader2 progressValue={numPassed} max={total} />
       </div>
       <p className="text-4xl font-bold border-2 rounded-xl bg-gray-100 px-10 py-5">{title}</p>

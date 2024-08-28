@@ -10,7 +10,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ isClick, setIsClick }) => {
   return (
     <div className="w-full mb-5 mt-1 text-center">
       {isClick ? (
-        <Link href="/" className="w-1/2   px-4 py-1 border-2 border-blue-500 rounded-lg bg-blue-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95">
+        <Link href="/home#cloze" className="w-1/2   px-4 py-1 border-2 border-blue-500 rounded-lg bg-blue-500 text-white font-semibold text-lg shadow-lg transition-transform duration-300 hover:shadow-xl hover:scale-105 active:scale-95">
           Finish
         </Link>
       ) : (

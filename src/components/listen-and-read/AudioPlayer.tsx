@@ -44,10 +44,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src,isAudioPlaying,setIsAudio
   return (
     <div onClick={togglePlayPause} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
       <img
-        src="https://cdn-icons-png.flaticon.com/128/4409/4409375.png" // Icon cái loa
+        className='w-6 max-w-6 min-w-6 mr-2'
+        src={"/img/icons8-speaker-stop.png" }
         alt={isPlaying ? "Click to pause audio" : "Click to play audio"}
-        style={{ width: '30px', height: '30px', marginRight: '10px' }}
+        
       />
+      
       <audio ref={audioRef} src={src} onEnded={()=>setIsAudioPlaying(false)}/>
     </div>
   );

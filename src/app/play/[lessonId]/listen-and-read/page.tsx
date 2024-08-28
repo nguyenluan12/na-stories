@@ -31,9 +31,9 @@ export default async function ListenAndRead({ params, searchParams }: LessonPlay
   }
    
   );
-  console.log(lessonsList)
+
   const sentences = lessonsList[0]?.lesson||[];
-  console.log(sentences)
+
   const title = lessonsList[0]?.title||''
   return (
     <ListenAndReadBLock sentences={sentences} title={title} />

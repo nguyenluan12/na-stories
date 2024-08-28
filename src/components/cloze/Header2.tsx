@@ -7,9 +7,9 @@ interface ClozeHeader2Props {
 
 export default function ClozeHeader2({ progressValue, max }: ClozeHeader2Props) {
   return (
-    <div className="flex w-full items-center bg-white-300">
+    <div className="flex w-1/2 min-w-80 items-center justify-center bg-white-300">
       <a href="/home" className="mx-2">
-        <XMarkIcon className="h-8 w-8" />
+        <XMarkIcon className="h-8" />
       </a>
       <progress
         className="progress-success progress ml-2 mr-4 w-full"

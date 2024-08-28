@@ -8,11 +8,13 @@ import { useSession } from "next-auth/react";
 import router from "next/router";
 import {prisma as prisma} from "~/lib/prisma"
 import { promise } from "zod";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { updateData } from "~/app/actions/update";
 
 type Lesson = {
     icon: string;
     name: string;
+    id:string
   };
   
   type LessonSet = {
@@ -20,30 +22,30 @@ type Lesson = {
   };
   
   interface MainComponentProps {
+    isCookie: boolean
     lessonCloze: LessonSet[];
     lessonListen: LessonSet[];
+    lessonDictation: LessonSet[];
   }
 
-export default function HomePage({lessonCloze,lessonListen}:MainComponentProps) {
+export default function HomePage({isCookie, lessonCloze,lessonListen,lessonDictation}:MainComponentProps) {
     const { data: session, status } = useSession();
   const router = useRouter();
-
+  // if(session){
+  //   updateData(session.user?.email||'',session.user?.image||'',session.user?.name||'')
+  // }
   useEffect(() => {
-    if (session === null) {
-      router.push("/");
+    if (session === null&&!isCookie) {
+      redirect("/login/signin");
     }
   }, [status, router]);
 
-  useEffect(() => {
-    console.log(session);
-    console.log(router)
 
-  }, [session]);
       
-//   console.log(lessonsList)
+ 
   
   return (
-    <MainBlock lessonCloze={lessonCloze} lessonListen={lessonListen}/>
+    <MainBlock lessonCloze={lessonCloze} lessonListen={lessonListen} lessonDictation={lessonDictation}/>
     // <></>
   );
 }

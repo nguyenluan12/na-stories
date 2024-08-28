@@ -1,12 +1,14 @@
 
 import HomeHeader from './HomeHeader';
 import TextBlock from './TextBlock';
-import ListLessonCloze from './ListLessonCloze';
-import ListLessonListen from './ListLessonListen';
+import ListLesson from './ListLessonCloze';
+import Link from 'next/link';
+
 
 type Lesson = {
   icon: string;
   name: string;
+  id:string;
 };
 
 type LessonSet = {
@@ -16,15 +18,23 @@ type LessonSet = {
 interface MainComponentProps {
   lessonCloze: LessonSet[];
   lessonListen: LessonSet[];
+  lessonDictation: LessonSet[];
 }
-
-export default function MainBlock({ lessonCloze,lessonListen }:MainComponentProps) {
+const types = ['cloze','listen','dictation']
+export default function MainBlock({ lessonCloze,lessonListen, lessonDictation }:MainComponentProps) {
+ 
   return (
     <main className="flex min-h-screen flex-col items-center">
       <HomeHeader/>
       <TextBlock />
-      <ListLessonCloze lessonCloze={lessonCloze} />
-      <ListLessonListen lessonListen={lessonListen} />
+      <ListLesson lessonCloze={lessonCloze} type='cloze'/>
+      <ListLesson lessonCloze={lessonListen}type='listen'/>
+      <ListLesson lessonCloze={lessonDictation} type='dictation'/>
+      <Link href='#homeHeader'
+        className='fixed w-5 sm:w-10 bottom-20 right-5 sm:right-20' 
+      >
+        <img className=' border-10  shadow-lg hover:scale-105 md:none active:scale-95' src='/img/up-arrow.png'/>
+      </Link>
     </main>
   );
 };

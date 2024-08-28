@@ -11,8 +11,9 @@ import {
 const pollyClient= new PollyClient({ region: "ap-southeast-1" });
 
 export async function generateAudio(prefix: string, sentence: Sentence) {
-    const voiceIds = ["Danielle", "Gregory", "Joanna", "Kendra", "Kimberly", "Salli", "Joey", "Kevin", "Matthew"]
-    // kevin:boy,  Kendra:grandma, 
+    const voiceIdsAll = ["Danielle", "Gregory", "Joanna", "Kendra", "Kimberly", "Salli", "Joey", "Kevin", "Matthew"]
+    const voiceIds = ["Danielle", "Gregory", "Kimberly", "Salli", "Joey", "Matthew"]
+    // kevin:boy,  Kendra:grandma,  Salli:woman, Matthew:man, Danielle: mom, Joanna:gg should not
     const randomVoiceId = voiceIds[Math.floor(Math.random() * voiceIds.length)];
   
     try {
@@ -23,7 +24,7 @@ export async function generateAudio(prefix: string, sentence: Sentence) {
         OutputS3KeyPrefix: prefix,
         Text: `<speak>${sentence.content}</speak>`||'',
         TextType: "ssml",
-        VoiceId: "Salli",
+        VoiceId: 'Matthew',
         SampleRate: "22050",
       };
       const output = await pollyClient.send(

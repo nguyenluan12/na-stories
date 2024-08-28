@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 
 import { useRouter } from "next/navigation";
 type Lesson = {
+  id:string
   icon: string;
   name: string;
 };
@@ -14,14 +15,16 @@ type LessonSet = {
 };
 
 interface MainComponentProps {
+  isCookie:boolean;
   lessonCloze: LessonSet[];
   lessonListen: LessonSet[];
+  lessonDictation:LessonSet[]
 }
 
-export default function Home({ lessonCloze, lessonListen }: MainComponentProps) {
+export default function Home({isCookie, lessonCloze, lessonListen,lessonDictation }: MainComponentProps) {
   
 
   return (
-    <HomePage lessonCloze={lessonCloze} lessonListen={lessonListen} />
+    <HomePage lessonCloze={lessonCloze} lessonListen={lessonListen} isCookie={isCookie} lessonDictation={lessonDictation} />
   );
-}
+} 

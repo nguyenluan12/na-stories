@@ -6,7 +6,7 @@ import { type Metadata } from "next";
 export const metadata: Metadata = {
   title: "Naschool",
   description: "The best way to learning English",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  icons: [{ rel: "icon", url: "/img/icon-naschool.png" }],
 };
 
 export default function RootLayout({

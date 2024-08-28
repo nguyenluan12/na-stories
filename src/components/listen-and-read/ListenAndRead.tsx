@@ -89,14 +89,14 @@ export default function ListenAndReadBLock({sentences, title}:{sentences:Sentenc
 
   return (
     <div className="flex items-center flex-col p-20  w-screen h-screen">
-      <div className="w-1/2 fixed  top-0 pb-10 z-50 bg-white">
+      <div className="w-1/2 min-w-72 fixed  top-0 pb-10 z-50 bg-white">
         <ClozeHeader2 progressValue={items.length} max={sentences.length} />
       </div>
       <div className="flex flex-col items-center mb-4 w-fit">
         <img alt="icon lesson" src="/img/icon-lesson.svg" className="mr-4" />
         <h1 className="text-2xl font-bold">{title}</h1>
       </div>
-      <div className="w-2/5  p-5 mb-20 rounded-xl">
+      <div className="w-2/5 min-w-96 p-5 mb-20 rounded-xl">
         {items.map((item, index) => (<div>
             <div
                 key={item.id}

@@ -5,7 +5,7 @@ import {prisma as prisma} from "~/lib/prisma"
 
 
 export const getUserByEmail = async(Email:string)=>{
-  console.log(Email)  
+ 
     
         return(
             await prisma.user.findFirst({

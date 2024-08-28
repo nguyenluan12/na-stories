@@ -11,15 +11,32 @@ datasource db {
 }
 
 model lesson_cloze {
-    id     String @id @default(cuid())
+    id     String  @id @default(cuid())
     title  String
     lesson Json?
+    img    String?
 }
 
 model lesson_listen_read {
-    id     String @id @default(cuid())
+    id     String  @id @default(cuid())
     title  String
     lesson Json?
+    img    String?
+}
+
+model dictation {
+    id     String  @id @default(cuid())
+    title  String
+    lesson Json?
+    img    String?
+}
+
+model review {
+    userId    String   @id
+    userEmail String
+    type      String
+    title     String
+    time      DateTime @updatedAt
 }
 
 // model User {
@@ -50,6 +67,14 @@ model User {
     date        String?
     Account     Account[]
     Session     Session[]
+}
+
+model storyGenerated {
+    id        String @id @default(cuid())
+    title     String
+    content   String
+    translate String
+    ask       Json
 }
 
 // model Account {

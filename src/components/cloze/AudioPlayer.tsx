@@ -9,7 +9,7 @@ type AudioPlayerProps = {
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, isAudioPlaying, setIsAudioPlaying }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  console.log(isAudioPlaying)
+  
   const togglePlayPause = () => {
     if (!isAudioPlaying) {
       if (audioRef.current) {
@@ -33,9 +33,10 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ src, isAudioPlaying, setIsAud
   return (
     <div onClick={togglePlayPause} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
       <img
-        src="https://cdn-icons-png.flaticon.com/128/4409/4409375.png" // Icon cái loa
+        className='w-6 max-w-6 min-w-6'
+        src={isPlaying?"/img/icons8-speaker.gif":"/img/icons8-speaker-stop.png" }// Icon cái loa
         alt={isPlaying ? "Click to pause audio" : "Click to play audio"}
-        style={{ width: '30px', height: '30px', marginRight: '10px' }}
+        // style={{ width: '30px', height: '30px', marginRight: '10px' }}
       />
       <audio ref={audioRef} src={src} onEnded={handleOnEnded} />
     </div>
