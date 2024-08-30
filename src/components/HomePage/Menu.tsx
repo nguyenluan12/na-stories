@@ -58,10 +58,10 @@ export default function Menu(){
 
       return(
         <div
-        className={`absolute min-w-48 right-0 md:left-0 lg:w-fit top-9 text-black border-2 rounded-xl bg-gray-50 transition-transform duration-500 ease-in-out  'opacity-100 translate-y-0' `}>
+        className={`absolute  min-w-48 right-0 md:left-0 lg:w-fit top-9 text-black border-2 rounded-xl bg-gray-50 transition-transform duration-500 ease-in-out  'opacity-100 translate-y-0' `}>
 
         
-          <ul className="menu text-black bg-gray-100 rounded-box w-56">
+          <ul className="menu text-black bg-gray-100 rounded-box w-56 z-50">
             <li><Link href="/home">
               Home
             </Link></li>

@@ -85,7 +85,7 @@ export default function ProfileContent({users, cookie}: {users:User[], cookie:st
         {changeMode?<ChangeInfor imgSrc={imgSrc} user={user}/> : <Infor user={user} />}
      
             {changeMode?<button
-                className="flex items-center w-1/7 h-[30px] scale-105 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-sm text-white font-bold text-lg shadow-lg transition-transform duration-200 hover:shadow-xl hover:scale-110 active:scale-100"
+                className="flex items-center w-1/7 h-[30px] scale-105 px-8 py-5 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-sm text-white font-bold text-lg shadow-lg transition-transform duration-200 hover:shadow-xl hover:scale-110 active:scale-100"
                 onClick={()=>{
                   window.location.reload();
                   setChangeMode(false)
@@ -94,7 +94,7 @@ export default function ProfileContent({users, cookie}: {users:User[], cookie:st
                 Done
             </button>:
             <button
-                className="flex items-center w-1/7 h-[30px] scale-105 px-4 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-sm text-white font-bold text-lg shadow-lg transition-transform duration-200 hover:shadow-xl hover:scale-110 active:scale-100"
+                className="flex items-center w-1/7 h-[30px] scale-105 px-8 py-5 my-2 border-2 border-green-500 rounded-lg bg-green-500 text-sm text-white font-bold text-lg shadow-lg transition-transform duration-200 hover:shadow-xl hover:scale-110 active:scale-100"
                 onClick={()=>setChangeMode(true)}
             >
                 Edit

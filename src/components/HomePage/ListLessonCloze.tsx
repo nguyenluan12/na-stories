@@ -31,7 +31,7 @@ type Lesson = {
               <Link key={idx} href={`/play/${list.id}/${type =='cloze'?'cloze':type=='listen'?'listen-and-read':'dictation'}`} 
               className="min-w-32 h-48 flex flex-col justify-between items-center cursor-pointer w-1/5 rounded-xl shadow-xl p-6 m-3 hover:bg-gray-50 shadow-sm transition-transform duration-200 hover:shadow-xl hover:scale-105 active:scale-95">
                 
-                    <img className="h-24 rounded-xl" src={list.icon} alt={list.name}></img>
+                    {/* <img className="h-24 rounded-xl" src={list.icon} alt={list.name}></img> */}
                     <p className="font-semibold text-center">{list.name}</p>
                   
               

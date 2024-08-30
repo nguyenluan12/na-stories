@@ -25,7 +25,7 @@ export default function AvatarBlock({imgSrc,changeMode, email,setImgUrl}:{
     console.log(email)
     return(
         <div className=" w-1/2 min-w-72 h-[200px] bg-green-400 rounded-lg flex flex-row items-end justify-center">
-            <div className="relative rounded-full border-4 ">
+            <div className="relative rounded-full border-4 z-0 ">
             {!changeMode? <img src={imgSrc}
                         className="w-20 h-20 rounded-full"
                         />

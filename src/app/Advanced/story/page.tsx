@@ -26,7 +26,7 @@ export default function StoryPage(){
                 type="submit"
                 className="bg-blue-500 text-white text-xs md:text-lg font-semibold p-2 rounded-2xl"
                 >
-                Submit
+                Create
                 </button>
             </form>
             

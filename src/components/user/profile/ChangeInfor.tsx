@@ -145,7 +145,7 @@ export default function ChangeInfor({imgSrc, user }: {imgSrc:string, user: User 
           className="mt-4 bg-blue-500 text-white p-2 rounded-lg"
           
         >
-          {pending ? 'Submitting...' : 'Save'}
+          {state?.errors?'updated': 'Save'}
         </button>
       </form>
     </div>
