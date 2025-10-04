@@ -8,14 +8,20 @@ import Header from "~/components/Header";
 import HomeHeader from "~/components/HomePage/HomeHeader";
 import { prisma } from "~/lib/prisma";
 // import AudioPlayer from "~/components/listen-and-read/AudioPlayer";
-type datatype = {
-    id:string;
-    title:string;
-    lesson: [{}];
-    img:string;
-}
+type LessonItem = {
+    content: string;
+    audioUrl: string;
+  };
+  
+  type DictationData = {
+    id: string;
+    title: string;
+    lesson: LessonItem[];
+    img: string|null;
+  };
+  
 
-export default function Dictation({data}:datatype){
+export default function Dictation({data}: { data: DictationData }){
     const [isAudioPlaying,setIsAudioPlaying]=useState(false)
     const [idx, setIdx]= useState(0);
     const lesson = data.lesson;
@@ -34,7 +40,7 @@ export default function Dictation({data}:datatype){
     }
   }, [isChecked, isTrue]);
   useEffect(()=>{
-    let result=removePunctuation(item.content.toLowerCase())
+    let result=removePunctuation(item?.content.toLowerCase()||'')
         let answerUser = removePunctuation(answer.toLowerCase())
         
         setIsTrue(answerUser==result)
@@ -79,7 +85,7 @@ export default function Dictation({data}:datatype){
                         <p className="text-gray-500">{currentIdx}/{lesson.length}</p>
                         </div>
                    <div className="flex flex-row justify-center gap-5 p-3  w-full"> 
-                        <AudioPlayer src={item.audioUrl} 
+                        <AudioPlayer src={item?.audioUrl||''} 
                         isAudioPlaying={isAudioPlaying} 
                         setIsAudioPlaying={setIsAudioPlaying}    />
                         <img className="w-1/2 min-w-48 h-20 rounded-lg border-2" src={isAudioPlaying?`/img/soundwave.gif`:'/img/soundwave-img.png'}/>
@@ -126,7 +132,7 @@ export default function Dictation({data}:datatype){
                                 strokeWidth="2"
                                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>{item.content}</span>
+                            <span>{item?.content}</span>
                             
                         </div>:
                         <div role="alert" className="alert alert-error text-white w-2/3 min-w-56 "style={{opacity:isChecked?1:0}}>
@@ -141,7 +147,7 @@ export default function Dictation({data}:datatype){
                             strokeWidth="2"
                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                        <span>{item.content}</span>
+                        <span>{item?.content}</span>
                     </div>
                     }
                 

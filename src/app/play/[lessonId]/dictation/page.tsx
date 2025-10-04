@@ -14,14 +14,26 @@ interface LessonPlayProps {
       activityId?: string;
     }
   }
+export type DictationData = {
+  id: string;
+  title: string;
+  lesson: { content: string; audioUrl: string }[];
+  img: string | null;
+};
 export default async function DictationPage({ params, searchParams }: LessonPlayProps){
     const data = await prisma.dictation.findFirst({
         where:{ 
             id : params.lessonId
         }
       });
+      const dictationData: DictationData = {
+        id: data?.id||'',
+        title: data?.title||'',
+        lesson: data?.lesson as { content: string; audioUrl: string }[],
+        img: data?.img||null,
+      };
     // console.log(data)
     return(
-        <Dictation data={data} />
+        <Dictation data={dictationData} />
     )
 }

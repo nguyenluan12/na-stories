@@ -1,244 +1,236 @@
 "use server"
 
 import { PrismaClient } from "@prisma/client";
-import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 import { generateAudio } from "./audio";
 
-
-
-
-const openai = new OpenAI();
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 const prisma = new PrismaClient();
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
-//Story
-// export const generateStory=async (title:string)=>{
-//     const Story = z.object({
-//         title: z.string(),
-//         id: z.string(),
-//         content: z.string(),
-//         translation: z.string(),
-       
-        
-//     });
-
-//     const completion = await openai.beta.chat.completions.parse({
-//     model: "gpt-4o-2024-08-06",
-//     messages: [
-//         { role: "system", content: "You are the best fairy tale teller" },
-//         { role: "user", content: "Story have about 10-15 sentences." },
-//         { role: "user", content: "Translate them to Vietnamese" },
-//         // { role: "user", content: "Give a vocabulary each sentence" },
-//         // { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
-//         // { role: "user", content: "The gapIndexes are not allowed to refer to punctuation in a sentence " },
-//         { role: "user", content: `The title is ${title} ` },
-//         // { role: "user", content: "There must be space between words and punctuation marks, not attached" },
-//         // { role: "user", content: "The gapIndexes have one element" },
-//     ],
-//     response_format: zodResponseFormat(Story, "event"),
-//     });
-
-//     const event = completion.choices[0]?.message.parsed;
-//     // console.log(event)
-//     // const lesson = await Promise.all(event?.lesson.map(async (item) => {
-//     //     const text = {
-//     //         id: "1",
-//     //         content: item.content,
-//     //     };
-//     //     const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
-//     //     return {
-//     //         id: item.id,
-//     //         content: item.content,
-//     //         translation: item.translation,
-//     //         gapIndexes: item.gapIndexes,
-//     //         audioUrl: audioUrl,
-//     //     };
-//     // }) || []);
-//     // await prisma.lesson_cloze.create({
-//     //         data: {
-//     //         title: event?.title||'',
-//     //         lesson: lesson
-//     //         }
-//     //     });
-//     // await prisma.$disconnect()
-//     return event;
-//   }
+// This is a helper function to parse JSON from the Gemini response
+async function parseGeminiResponse(prompt: string, schema: z.ZodTypeAny) {
+  try {
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    // Gemini often returns the JSON within a markdown code block, so we'll need to extract it.
+    const jsonString = text.replace(/```json\n|```/g, '').trim();
+    const parsedData = JSON.parse(jsonString);
+    return schema.parse(parsedData);
+  } catch (error) {
+    console.error("Error parsing Gemini response:", error);
+    throw new Error("Failed to parse Gemini response.");
+  }
+}
 
 // VOCAB
-  const generateVocab=async (title:string)=>{
-    const Story = z.object({
-        title: z.string(),
-        lesson: z.array(z.object({
-        id: z.string(),
-        content: z.string(),
-        translation: z.string(),
-        gapIndexes: z.array(z.number()),
-        })),
-    });
+export const generateVocab = async (title: string) => {
+  const StorySchema = z.object({
+    title: z.string(),
+    lesson: z.array(z.object({
+      id: z.string(),
+      content: z.string(),
+      translation: z.string(),
+      gapIndexes: z.array(z.number()),
+    })),
+  });
 
-    const completion = await openai.beta.chat.completions.parse({
-    model: "gpt-4o-2024-08-06",
-    messages: [
-        { role: "system", content: "You are best English teacher for foreigner" },
-        { role: "user", content: "Give an English vocalbulary(two or three word) for language beginers with 10-15 words." },
-        { role: "user", content: "Translate them to Vietnamese" },
-        { role: "user", content: "Give a vocabulary each sentence" },
-        // { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
-        { role: "user", content: "The gapIndexes are not allowed to refer to punctuation in a sentence " },
-        { role: "user", content: `The title is ${title} ` },
-        { role: "user", content: "There must be space between words and punctuation marks, not attached" },
-        { role: "user", content: "The gapIndexes have one element" },
-    ],
-    response_format: zodResponseFormat(Story, "event"),
-    });
+  const prompt = `
+    You are an excellent English teacher for foreigners.
+    Create a vocabulary lesson for language beginners with 10-15 words.
+    The lesson should be a JSON object with the following structure:
+    {
+      "title": "${title}",
+      "lesson": [
+        {
+          "id": "1",
+          "content": "English sentence here.",
+          "translation": "Vietnamese translation here.",
+          "gapIndexes": [
+            0(this is the index of the word to be cloze-tested. )
+          ]
+        }
+      ]
+    }
+    The title should be two to four words related to the vocabulary.
+    Each sentence should have one vocabulary word or phrase that a beginner can learn.
+    The "gapIndexes" array should contain the index of the word to be cloze-tested, and it should not be punctuation.Do **NOT** choose index of unimportant words like: articles (a, an, the), pronouns (I, you, he, she, it, we, they), auxiliary verbs (is, am, are, was, were, do, does, did), prepositions (in, on, at, of, to), or other function words.
+    The vocabulary is about "${title}".
+    Provide only the JSON object in your response, without any additional text or markdown.
+  `;
 
-    const event = completion.choices[0]?.message.parsed;
-    // GENERATE IMG
-    const response = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: event?.title||'',
-        n: 1,
-        size: "1024x1024",
-    });
-    const image_url = response?.data[0]?.url;
-    const lesson = await Promise.all(event?.lesson.map(async (item) => {
-        const text = {
-            id: "1",
-            content: item.content,
-        };
-        const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
-        return {
-            id: item.id,
-            content: item.content,
-            translation: item.translation,
-            gapIndexes: item.gapIndexes,
-            audioUrl: audioUrl,
-            
-        };
-    }) || []);
-    await prisma.lesson_cloze.create({
-            data: {
-            title: event?.title||'',
-            lesson: lesson,
-            img: image_url
-            }
-        });
-    await prisma.$disconnect()
-  }
+  const event = await parseGeminiResponse(prompt, StorySchema);
 
-  // // CONVERSATION
-const generateConversation = async (topic:string) => {
-    const Story = z.object({
-        title: z.string(),
+  // Note: Gemini doesn't have an equivalent to Dall-E 3 for image generation.
+  // You would need to use a separate image generation API or a different approach here.
+  // For this example, I'll use a placeholder.
+  const image_url = "placeholder_image_url";
 
-        lesson: z.array(z.object({
-        id: z.string(),
-        person: z.string(),
-        content: z.string(),
-        translate: z.string(),
-        audioUrl:z.string(),
-        })),
+  const lesson = await Promise.all(event.lesson.map(async (item) => {
+    const text = {
+      id: "1",
+      content: item.content,
+    };
+    const audioUrl = await generateAudio("na-stories", text.content);
+    return {
+      id: item.id,
+      content: item.content,
+      translation: item.translation,
+      gapIndexes: item.gapIndexes,
+      audioUrl: audioUrl,
+    };
+  }));
 
-    });
+  await prisma.lesson_cloze.create({
+    data: {
+      title: event.title,
+      lesson: lesson as any, // Prisma doesn't have a direct JSON type so 'any' is used for this example
+      img: image_url
+    }
+  });
 
-    const completion = await openai.beta.chat.completions.parse({
-    model: "gpt-4o-2024-08-06",
-    messages: [
-        { role: "system", content: "Give an English conversation between man and woman for language leaners level A2 with 10-15 sentences. Translate them to Vietnamese" },
-        { role: "user", content: `The title is ${topic} ` },
-        { role: "user", content: `the person should be man or woman lowercase  ` },
-    ],
-    response_format: zodResponseFormat(Story, "event"),
-    });
+  await prisma.$disconnect();
+};
 
-    const event = completion.choices[0]?.message.parsed;
-    const title = event?.title || '';
+// CONVERSATION
+export const generateConversation = async (topic: string) => {
+  const ConversationSchema = z.object({
+    title: z.string(),
+    lesson: z.array(z.object({
+      id: z.string(),
+      person: z.string(),
+      content: z.string(),
+      translate: z.string(),
+      audioUrl: z.string(),
+    })),
+  });
+
+  const prompt = `
+    You are an excellent English teacher for foreigners.
+    Create a conversation between a man and a woman for language learners at level A2. The conversation should be 10-15 sentences long.
+    The conversation should be a JSON object with the following structure:
+    {
+      "title": "${topic}",
+      "lesson": [
+        {
+          "id": "1",
+          "person": "man",
+          "content": "English sentence here.",
+          "translate": "Vietnamese translation here.",
+          "audioUrl": ""
+        }
+      ]
+    }
+    The "person" field should be either "man" or "woman".
+    The title of the conversation is about "${topic}".
+    Provide only the JSON object in your response, without any additional text or markdown.
+  `;
+
+  const event = await parseGeminiResponse(prompt, ConversationSchema);
+
+  const image_url = "placeholder_image_url";
+
+  const lesson = await Promise.all(event.lesson.map(async (item) => {
+    const voiceGender = item.person === "man" ? "MALE" : "FEMALE";
+    const text = {
+      id: "1",
+      content: item.content,
+    };
+    const audioUrl = await generateAudio("na-stories", text.content, voiceGender);
+    return {
+      id: item.id,
+      content: item.content,
+      translate: item.translate,
+      audioUrl: audioUrl,
+      person: item.person,
+    };
+  }));
+
+  await prisma.lesson_listen_read.create({
+    data: {
+      title: event.title,
+      lesson: lesson as any,
+      img: image_url
+    }
+  });
+
+  await prisma.$disconnect();
+};
+
+// DICTATION
+export const generateDictation = async (topic: string) => {
+  const DictationSchema = z.object({
+    title: z.string(),
+    lesson: z.array(z.object({
+      id: z.string(),
+      content: z.string(),
+      translate: z.string(),
+      audioUrl: z.string(),
+    })),
+  });
+
+  const prompt = `
+    You are an excellent English teacher for foreigners.
+    Tell a story for language learners at level A2. The story should be 10-15 sentences long.
+    The story should be a JSON object with the following structure:
+    {
+      "title": "${topic}",
+      "lesson": [
+        {
+          "id": "1",
+          "content": "English sentence here.",
+          "translate": "Vietnamese translation here.",
+          "audioUrl": ""
+        }
+      ]
+    }
+    The title of the story is "${topic}".
+    Provide only the JSON object in your response, without any additional text or markdown.
+  `;
+
+  const event = await parseGeminiResponse(prompt, DictationSchema);
+
+  const lesson = await Promise.all(event.lesson.map(async (item) => {
     
-    // GENERATE IMG
-    const response = await openai.images.generate({
-        model: "dall-e-3",
-        prompt: event?.title||'',
-        n: 1,
-        size: "1024x1024",
-    });
-    const image_url = response?.data[0]?.url;
-    console.log(image_url)
-    const lesson = await Promise.all(event?.lesson.map(async (item) => {
-        const text = {
-            id: "1",
-            content: item.content,
-        };
-        const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
-        return {
-            id: item.id,
-            content: item.content,
-            translate: item.translate,
-            audioUrl: audioUrl,
-            person: item.person,
-        };
-    }) || []);
-    await prisma.lesson_listen_read.create({
-        data: {
-        title: title,
-        lesson: lesson,
-        img : image_url
-        }
-    });
-    await prisma.$disconnect()
+    const text = {
+      id: "1",
+      content: item.content,
+    };
+    const audioUrl = await generateAudio("na-stories", text.content);
+    return {
+      id: item.id,
+      content: item.content,
+      translate: item.translate,
+      audioUrl: audioUrl,
+    };
+  }));
+
+  await prisma.dictation.create({
+    data: {
+      title: event.title,
+      lesson: lesson as any
+    }
+  });
+
+  await prisma.$disconnect();
+};
+const listTopics = [
+  "My Family",
+  // "My House",
+  // "A Day at School",
+  // "My Favorite Food",
+  // "My Best Friend"
+]
+for (const topic of listTopics) {
+  generateVocab(topic);
+  // generateConversation(topic);
+  // generateDictation(topic);
 }
-const generateDictation = async (topic:string) => {
-    const Story = z.object({
-        title: z.string(),
-
-        lesson: z.array(z.object({
-        id: z.string(),
-        person: z.string(),
-        content: z.string(),
-        translate: z.string(),
-        audioUrl:z.string(),
-        })),
-
-    });
-
-    const completion = await openai.beta.chat.completions.parse({
-    model: "gpt-4o-2024-08-06",
-    messages: [
-        { role: "system", content: "Tell me a story, told by someone for language leaners level A2 with 10-15 sentences. Translate them to Vietnamese" },
-        { role: "user", content: `The title is ${topic} ` },
-    ],
-    response_format: zodResponseFormat(Story, "event"),
-    });
-
-    const event = completion.choices[0]?.message.parsed;
-    const title = event?.title || '';
-    const lesson = await Promise.all(event?.lesson.map(async (item) => {
-        const text = {
-            id: "1",
-            content: item.content,
-        };
-        const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
-        return {
-            id: item.id,
-            content: item.content,
-            translate: item.translate,
-            audioUrl: audioUrl,
-        };
-    }) || []);
-    await prisma.dictation.create({
-        data: {
-        title: title,
-        lesson: lesson
-        }
-    });
- 
-    await prisma.$disconnect()
-}
-// await prisma.user.deleteMany();
-// const user = await prisma.user.findMany();
-// console.log(user);
-generateVocab("Tradition Festival")
-
-// generateDictation("Mark's Big Game")
-// generateStory('snow white')
-// generateConversation('Movies and TV Shows')
+// generateVocab("Daily Activities");
+// generateConversation("The First Date");
+// generateDictation("A Day at the School");
+// const mySentence = "Hello, world! This is a test of Google's Text-to-Speech API.";
+// generateAudio("hello_world_tts.mp3", mySentence)
+//   .then((url) => console.log(`Function finished. File URL: ${url}`))
+//   .catch((err) => console.error("Function failed:", err));

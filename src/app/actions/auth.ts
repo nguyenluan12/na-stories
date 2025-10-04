@@ -5,16 +5,26 @@ import { prisma } from '../../lib/prisma';
 import { redirect } from 'next/navigation';
 import { createSession, decrypt, deleteSession, logout } from '../../lib/session'
 import { cookies } from 'next/headers';
-import { error, log } from 'console';
-import { json } from 'stream/consumers';
-import Email from 'next-auth/providers/email';
-import { PrismaClient } from "@prisma/client";
-import OpenAI from "openai";
-import { zodResponseFormat } from "openai/helpers/zod";
 import { z } from "zod";
-import { title } from 'process';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const openai = new OpenAI();
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+
+// This is a helper function to parse JSON from the Gemini response
+async function parseGeminiResponse(prompt: string, schema: z.ZodTypeAny) {
+  try {
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+    // Gemini often returns the JSON within a markdown code block, so we'll need to extract it.
+    const jsonString = text.replace(/```json\n|```/g, '').trim();
+    const parsedData = JSON.parse(jsonString);
+    return schema.parse(parsedData);
+  } catch (error) {
+    console.error("Error parsing Gemini response:", error);
+    throw new Error("Failed to parse Gemini response.");
+  }
+}
 export async function signup(state: FormState, formData: FormData) {
   // Validate form fields
   console.log("signup")
@@ -183,6 +193,7 @@ export async function updateInfor(state: FormState, formData: FormData) {
     // await createSession(user.id)
     // redirect("/login/signin")
 }
+// STORY
 export async function generateStory(state: StoryFormState, formData: FormData){
   console.log("generate Story")
 
@@ -193,168 +204,147 @@ export async function generateStory(state: StoryFormState, formData: FormData){
   })
   console.log(validatedFields)
   
-  const Story = z.object({
-      title: z.string(),
-      id: z.string(),
-      content: z.string(),
-      translation: z.string(),
-      ask: z.array(
-       z.object({
+  const StorySchema = z.object({
+    title: z.string(),
+    id: z.string(),
+    content: z.string(),
+    translation: z.string(),
+    ask: z.array(
+      z.object({
         question: z.string(),
         answer: z.string(),
-       })
-      )
-      
+      })
+    ),
   });
 
-  const completion = await openai.beta.chat.completions.parse({
-  model: "gpt-4o-2024-08-06",
-  messages: [
-      { role: "system", content: "You are the best english teller" },
-      { role: "user", content: "The story told in English has about 10-15 sentences." },
-      { role: "user", content: "Translate them to Vietnamese" },
-      // { role: "user", content: "Give a vocabulary each sentence" },
-      // { role: "user", content: "The title will be two to four words, which are related topics of vocabulary" },
-      // { role: "user", content: "The gapIndexes are not allowed to refer to punctuation in a sentence " },
-      { role: "user", content: `The title of the story can be ${validatedFields.data?.title} or some story related to that element ` },
-      { role: "user", content: "You will ask about 4-5 questions related to the content in the story for readers to answer. The questions will be placed in the question section of the ask element, and the answers will be placed in the answer section of the element ask" },
-      // { role: "user", content: "The gapIndexes have one element" },
-  ],
-  response_format: zodResponseFormat(Story, "event"),
-  
+  const prompt = `
+    You are the best English storyteller.
+    Create a short story for beginners with 10–15 sentences in English.
+    The lesson should be a JSON object with the following structure:
+    {
+      "title": "${validatedFields.data?.title}",
+      "id": "1",
+      "content": "English story here (10–15 sentences).",
+      "translation": "Vietnamese translation of the story.",
+      "ask": [
+        {
+          "question": "Question about the story",
+          "answer": "Answer to the question"
+        }
+      ]
+    }
+    Requirements:
+    - The story title must be 2–4 words, related to the topic "${validatedFields.data?.title}".
+    - The English story should be simple, clear, and suitable for A2–B1 learners.
+    - Provide the Vietnamese translation of the story in full.
+    - Create 4–5 simple questions about the story with their correct answers.
+    - Provide only the JSON object in your response, without any additional text or markdown.
+  `;
+
+  const event = await parseGeminiResponse(prompt, StorySchema);
+  console.log('Generated Story from Gemini:', event);
+  // Note: Gemini doesn't have an equivalent to Dall-E 3 for image generation.
+  // You would need to use a separate image generation API or another approach.
+  // For this example, I'll use a placeholder.
+  const image_url = "placeholder_image_url";
+
+  await prisma.storyGenerated.create({
+    data: {
+      content: event.content,
+      title: event.title,
+      translate: event.translation,
+      ask: event.ask,
+      img: image_url,
+    },
   });
-  const buffer = {
-    name:''
+
+  await prisma.$disconnect();
+
+  return {
+    message: {
+      content: event.content,
+      title: event.title,
+      translate: event.translation,
+      ask: event.ask,
+      img: image_url,
+    },
   };
+};
 
-// Set a `name` that ends with .png so that the API knows it's a PNG image
-
-
-  const event = completion.choices[0]?.message.parsed;
-  // GENERATE IMG
-  const response = await openai.images.generate({
-    model: "dall-e-3",
-    prompt: event?.title||'',
-    n: 1,
-    size: "1024x1024",
-  });
-  const image_url = response?.data[0]?.url;
-  console.log(image_url)
-  // console.log(event)
-  // // const lesson = await Promise.all(event?.lesson.map(async (item) => {
-  // //     const text = {
-  // //         id: "1",
-  // //         content: item.content,
-  // //     };
-  // //     const audioUrl = await generateAudio("na-stories", text); // Chờ Promise hoàn thành
-  // //     return {
-  // //         id: item.id,
-  // //         content: item.content,
-  // //         translation: item.translation,
-  // //         gapIndexes: item.gapIndexes,
-  // //         audioUrl: audioUrl,
-  // //     };
-  // // }) || []);
-  // // await prisma.lesson_cloze.create({
-  // //         data: {
-  // //         title: event?.title||'',
-  // //         lesson: lesson
-  // //         }
-  // //     });
-  // // await prisma.$disconnect()
-  // return event;
-  if (validatedFields.success) {
-    console.log(event)
-    console.log('valid')
-    await prisma.storyGenerated.create({
-      data: {
-        content:event?.content||'',
-        title:event?.title||'',
-        translate: event?.translation||'',
-        ask: event?.ask||{},
-        img: image_url||'',
-      }
-    });
-    await prisma.$disconnect()
-    return {
-      message:{
-        content:event?.content,
-        title:event?.title,
-        translate: event?.translation,
-        ask: event?.ask,
-        img: image_url || ''
-    }}
-  }else{
-    return{
-      errors:{
-        title: ['Fail to generate'],
-    }
-    }
-  }
-  
-}
-export async function CheckSentences(state: StoryFormState, formData: FormData){
-  console.log("Checking Sentences")
-
-
+export async function CheckSentences(state: StoryFormState, formData: FormData) {
+  // Bước 1: Validate dữ liệu từ form
   const validatedFields = generateStoryForm.safeParse({
-    title: formData.get('title'),
-
-  })
-  console.log(formData.get('title'))
-  
-  const Story = z.object({
-      id: z.string(),
-      ask: z.array(
-       z.object({
-        sentences: z.string(), // câu trong đoạn văn (chat gpt sẽ phải phân tích tính đúng sai của từng câu văn)
-        check: z.boolean(), //return true nễu câu đó hợp lý, false nếu câu đó sai ngứ pháp hoặc từ vựng
-        answer: z.string(), // Đáp án sau khi chỉnh sửa câu
-        reason: z.string()  // Lý do sai của câu đó
-       })
-      )
-      
+    title: formData.get("title"), // input: câu của học viên
   });
-
-  const completion = await openai.beta.chat.completions.parse({
-    model: "gpt-4o-2024-08-06",
-    messages: [
-        { role: "system", content: "You are an expert English grammar checker." },
-        { 
-          role: "user", 
-          content: `You will be given sentence numbers in English. Your task is:
-          1. Analyze each sentence to find grammatical and vocabulary errors.
-          2. For each sentence, return:
-              - “check”: true if the sentence is grammatically correct, or false if there are errors.
-              - “answer”: Corrected sentence (if necessary).
-              - "reason": Briefly explain the error and how to fix it, if any. If the sentence is correct, send a short 2-4 word compliment to encourage the student.`
-        },
-        { role: "user", content: `The sentences are "${validatedFields.data?.title}" ` },
-        // { role: "user", content: "Translate the story to Vietnamese after checking the sentences." }
-    ],
-    response_format: zodResponseFormat(Story, "event"),
-  });
-  
-
-// Set a `name` that ends with .png so that the API knows it's a PNG image
-
-
-  const event = completion.choices[0]?.message.parsed;
-  console.log(event?.ask)
-  if (validatedFields.success) {
-    // console.log(event)
-    console.log('valid')
+  console.log(validatedFields)
+  if (!validatedFields.success) {
     return {
-      message:{
-        list: event?.ask
-    }}
-  }else{
-    console.log(validatedFields.error)
-    return{
-      errors:{
-        title: ['Fail to generate'],
-    }
-    }
+      errors: {
+        sentences: ["Fail to generate"],
+      },
+    };
   }
-  
+
+  // Bước 2: Khai báo schema cho dữ liệu trả về từ Gemini
+  const SentenceSchema = z.object({
+    id: z.string(),
+    ask: z.array(
+      z.object({
+        sentences: z.string(), // câu của học viên
+        check: z.boolean(),    // true nếu đúng, false nếu sai
+        answer: z.string(),    // câu chỉnh sửa
+        reason: z.string(),    // lời giải thích hoặc lời khen
+      })
+    ),
+  });
+
+  // Bước 3: Prompt gửi tới Gemini
+  const prompt = `
+You are an expert English grammar checker.
+You will be given one or more sentences in English. Return ONLY a single JSON object with this exact structure:
+
+{
+  "id": "1",
+  "ask": [
+    {
+      "sentences": "<original sentence>",
+      "check": true|false,
+      "answer": "<corrected sentence (minimal edit)>",
+      "reason": "<explanation>"
+    }
+  ]
+}
+
+Instructions:
+- If the input has multiple sentences, split them and return one item in "ask" for each sentence, in the same order.
+- "check": true if the sentence is correct, false if it has any grammar or vocabulary errors.
+- "answer": provide the corrected sentence (or the same if correct).
+- "reason":
+   - If incorrect: briefly point out what is wrong and explain why it is wrong (grammar/vocabulary).
+   - If correct: give a short 2–4 word compliment (e.g., "Good job", "Well done").
+- IMPORTANT: Do NOT mark as incorrect for punctuation (e.g., commas, periods) or capitalization (uppercase/lowercase). Only check grammar and vocabulary.
+
+The sentences are: "${validatedFields.data.title}"
+`;
+
+
+
+  // Bước 4: Gọi Gemini qua helper parseGeminiResponse
+  try {
+    const event = await parseGeminiResponse(prompt, SentenceSchema);
+    console.log("✅ Checked Sentences:", event);
+
+    return {
+      message: {
+        list: event.ask,
+      },
+    };
+  } catch (error) {
+    console.error("❌ Gemini API error", error);
+    return {
+      errors: {
+        sentences: ["Gemini request failed"],
+      },
+    };
+  }
 }

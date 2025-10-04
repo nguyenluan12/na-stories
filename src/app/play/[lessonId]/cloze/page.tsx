@@ -14,6 +14,13 @@ interface LessonPlayProps {
     activityId?: string;
   }
 }
+type Sentence = {
+  id: string;
+  content: string;
+  translation: string;
+  gapIndexes: number[];
+  audioUrl: string;
+}[];
 const prisma = new PrismaClient();
 export default async function LessonPlay({ params, searchParams }: LessonPlayProps) {
   // console.log(params)
@@ -26,26 +33,14 @@ export default async function LessonPlay({ params, searchParams }: LessonPlayPro
     }
   })
   
-  console.log(users)
-  // await prisma.review.create({
-  //   data:{
-  //     userId:cook?.userId||'',
-  //     userEmail:'huuluan0511@gmail.com'
-  //   }
-  // })
-  // const lessonReview = users?.lesson?.cloze;
-  
-  
-  // await prisma.review.findFirst({
-  //   where:{userId:userId?.aud.}
-  // })
   const lessonsList = await prisma.lesson_cloze.findMany({
     where:{ 
         id : params.lessonId
     }
   });
 
-  const sentences = lessonsList[0]?.lesson||[];
+  // const sentences = lessonsList[0]?.lesson||[];
+  const sentences: Sentence = (lessonsList[0]?.lesson as Sentence) || [];
   const title = lessonsList[0]?.title||'';
   // if(users){
   //   await prisma.review.update({
